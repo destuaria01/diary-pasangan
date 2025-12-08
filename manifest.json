@@ -1,0 +1,22 @@
+{
+  "name": "Diary Pasangan",
+  "short_name": "Diary",
+  "description": "Diary khusus untuk pasangan agar bisa menyimpan kenangan bersama secara pribadi.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#fff5f9",
+  "theme_color": "#ff6fa3",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/833/833472.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/833/833472.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
