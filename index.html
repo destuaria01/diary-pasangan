@@ -561,6 +561,17 @@ window.hideRaw = hideRaw;
 window.resetAll = resetAll;
 window.requestNotificationPermission = requestNotificationPermission;
 window.triggerSOS = triggerSOS;
+  <script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function () {
+    navigator.serviceWorker.register("./sw.js")
+      .then(res => console.log("SW registered", res))
+      .catch(err => console.log("SW failed", err));
+  });
+}
+</script>
+</body>
+</html>
 </script>
 </body>
 </html>
