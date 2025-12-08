@@ -1,513 +1,199 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Diary Pasangan — Ultimate (Phase 1)</title>
-<meta name="theme-color" content="#16a34a"/>
-
-<!-- CDN libraries -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
-<style>
-  :root{
-    --bg:linear-gradient(180deg,#ecfeff,#f0fff4);
-    --card:#ffffff;
-    --accent:#16a34a;
-    --accent2:#34d399;
-    --text:#064e3b;
-    --muted:#4b6b5a;
-    --radius:12px;
-    --shadow:0 10px 25px rgba(2,6,23,0.06);
-  }
-  *{box-sizing:border-box}
-  body{margin:0;font-family:system-ui,Segoe UI,Roboto,Arial;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
-  .wrap{max-width:980px;margin:14px auto;padding:12px}
-  header{display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px;background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff}
-  .logo{width:52px;height:52px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800}
-  .card{background:var(--card);border-radius:var(--radius);padding:12px;margin-top:12px;box-shadow:var(--shadow)}
-  label{display:block;color:var(--muted);font-size:13px;margin-top:8px}
-  input,select,textarea,button{font-size:14px}
-  input,select,textarea{width:100%;padding:10px;border-radius:10px;border:1px solid #e6f6ec;background:#fff}
-  textarea{min-height:84px;resize:vertical}
-  .row{display:flex;gap:8px;align-items:center}
-  .col{flex:1}
-  button{padding:10px 12px;border-radius:10px;border:0;cursor:pointer;color:#fff;background:linear-gradient(90deg,var(--accent),var(--accent2))}
-  .btn-ghost{background:transparent;color:var(--text);border:1px solid rgba(6,63,47,0.06)}
-  .small{font-size:13px;color:var(--muted)}
-  .cal{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-top:8px}
-  .cal-day{padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.03);min-height:68px;background:#fff;cursor:pointer}
-  .cal-day.has{box-shadow:0 6px 16px rgba(22,163,74,0.06);border-color:var(--accent)}
-  .log-item{padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.03);margin-bottom:8px;background:linear-gradient(180deg,#fff,#fbfff9)}
-  .thumb{max-width:100%;border-radius:8px;margin-top:6px}
-  .hidden{display:none}
-  canvas{width:100% !important;height:160px !important}
-  .muted{color:var(--muted)}
-</style>
+  <meta charset="UTF-8">
+  <title>Diary Pasangan</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#22c55e">
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg,#dcfce7,#bbf7d0);
+      color: #064e3b;
+    }
+    .card {
+      background: white;
+      margin: 12px;
+      padding: 12px;
+      border-radius: 14px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+    }
+    h1,h2 { text-align:center; }
+    button {
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: none;
+      background: #22c55e;
+      color: white;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    input, select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 6px;
+      border-radius: 8px;
+      border: 1px solid #86efac;
+    }
+    img { width: 100%; border-radius: 10px; margin-top: 6px; }
+    .hidden { display: none; }
+    .log {
+      font-size: 12px;
+      border-top: 1px solid #bbf7d0;
+      margin-top: 6px;
+      padding-top: 6px;
+    }
+  </style>
 </head>
+
 <body>
-<div class="wrap">
 
-  <header>
-    <div class="logo">DP</div>
-    <div>
-      <div style="font-weight:700">Diary Pasangan — Ultimate</div>
-      <div class="small">Phase 1: Kalender • Grafik • PDF • Notif • Auto-lock</div>
-    </div>
-    <div style="margin-left:auto" class="small" id="clock">—</div>
-  </header>
+<!-- LOGIN -->
+<div id="login" class="card">
+  <h1>Diary Pasangan</h1>
+  <label>Masuk sebagai</label>
+  <select id="loginAs">
+    <option value="A">Pasangan A</option>
+    <option value="B">Pasangan B</option>
+  </select>
 
-  <!-- LOGIN -->
-  <div id="lockCard" class="card">
-    <h3>🔐 Masuk</h3>
-    <label>Masuk sebagai</label>
-    <select id="loginAs"><option value="A">Pasangan A</option><option value="B">Pasangan B</option><option value="admin">Admin</option></select>
-    <label>PIN</label>
-    <input id="pinInput" type="password" placeholder="PIN" />
-    <div class="row" style="margin-top:10px">
-      <button onclick="doLogin()">Masuk</button>
-      <button class="btn-ghost" onclick="openSettings()">Pengaturan</button>
-    </div>
-    <div class="small" style="margin-top:8px">PIN default: admin=1234, A=1111, B=2222</div>
+  <label>PIN</label>
+  <input id="pin" type="password">
+
+  <button onclick="login()">Masuk</button>
+  <p>PIN awal A = 1111 | B = 2222</p>
+</div>
+
+<!-- APLIKASI -->
+<div id="app" class="hidden">
+
+  <div class="card">
+    <h2>Nama Pasangan</h2>
+    <input id="nameA" placeholder="Nama Pasangan A">
+    <input id="nameB" placeholder="Nama Pasangan B">
+    <button onclick="saveNames()">Simpan Nama</button>
   </div>
 
-  <!-- APP -->
-  <div id="app" class="hidden">
+  <div class="card">
+    <h2>Absensi Keluar & Pulang</h2>
+    <select id="absenWho">
+      <option value="A">Pasangan A</option>
+      <option value="B">Pasangan B</option>
+    </select>
+    <select id="absenType">
+      <option value="Keluar">Keluar</option>
+      <option value="Pulang">Pulang</option>
+    </select>
+    <button onclick="absen()">Simpan Absensi</button>
+    <div id="absenList"></div>
+  </div>
 
-    <!-- Profile -->
-    <div class="card">
-      <div class="row">
-        <div class="col">
-          <label>Nama Pasangan A</label>
-          <input id="nameA" />
-          <label>Nama Pasangan B</label>
-          <input id="nameB" />
-        </div>
-        <div style="width:160px">
-          <label>Notifikasi (menit)</label>
-          <input id="notifMinutes" type="number" min="1" value="60" />
-          <div style="height:10px"></div>
-          <button class="btn-ghost" onclick="saveProfile()">Simpan</button>
-        </div>
-      </div>
-      <div class="small" style="margin-top:8px">Status: <span id="statusMode">Terpisah</span> · Total catatan: <span id="totalCount">0</span></div>
-    </div>
+  <div class="card">
+    <h2>Foto Aktivitas</h2>
+    <select id="photoWho">
+      <option value="A">Pasangan A</option>
+      <option value="B">Pasangan B</option>
+    </select>
+    <input id="photoFile" type="file" accept="image/*" capture="environment">
+    <button onclick="uploadPhoto()">Upload</button>
+  </div>
 
-    <!-- Actions -->
-    <div class="card">
-      <h4>Aksi Cepat</h4>
-      <div class="row">
-        <div class="col">
-          <button onclick="attemptAbs('A','keluar')">A Keluar</button>
-        </div>
-        <div class="col">
-          <button onclick="attemptAbs('A','pulang')">A Pulang</button>
-        </div>
-      </div>
-      <div style="height:8px"></div>
-      <div class="row">
-        <div class="col"><button onclick="attemptAbs('B','keluar')">B Keluar</button></div>
-        <div class="col"><button onclick="attemptAbs('B','pulang')">B Pulang</button></div>
-      </div>
-    </div>
+  <div class="card">
+    <h2>Galeri Aktivitas</h2>
+    <div id="gallery"></div>
+  </div>
 
-    <!-- Photo & daily -->
-    <div class="card">
-      <h4>Foto Aktivitas Harian</h4>
-      <div class="row">
-        <select id="photoPerson" style="width:110px"><option value="A">A</option><option value="B">B</option></select>
-        <input id="photoNote" placeholder="Keterangan (opsional)" />
-        <input id="filePhoto" type="file" accept="image/*" />
-        <button onclick="uploadDaily()">Upload</button>
-      </div>
-      <div id="photoGallery" style="margin-top:10px;display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px"></div>
-    </div>
-
-    <!-- Timeline -->
-    <div class="card">
-      <h4>Timeline</h4>
-      <div id="timeline" class="log" style="max-height:220px;overflow:auto"></div>
-    </div>
-
-    <!-- Calendar & Chart -->
-    <div class="card">
-      <h4>Kalender & Grafik Aktivitas</h4>
-      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
-        <button class="btn-ghost" onclick="prevMonth()">◀</button>
-        <select id="monthSel" onchange="renderCalendar()" style="flex:1"></select>
-        <select id="yearSel" onchange="renderCalendar()" style="width:120px"></select>
-        <button class="btn-ghost" onclick="nextMonth()">▶</button>
-      </div>
-      <div id="calendar" class="cal"></div>
-      <div style="margin-top:12px">
-        <canvas id="activityChart" height="140"></canvas>
-      </div>
-      <div style="margin-top:8px" class="row">
-        <button onclick="exportCSV()" class="btn-ghost">Export CSV</button>
-        <button onclick="exportDayPDF()" class="btn-ghost">Cetak Laporan (PDF)</button>
-      </div>
-    </div>
-
-    <!-- Backup & SOS -->
-    <div class="card">
-      <h4>Backup & SOS</h4>
-      <div class="row">
-        <button onclick="downloadBackup()">Unduh Backup (JSON)</button>
-        <input id="importFile" type="file" accept="application/json" style="display:none" onchange="importBackup(event)" />
-        <button class="btn-ghost" onclick="document.getElementById('importFile').click()">Restore dari File</button>
-        <div style="flex:1"></div>
-        <button class="btn-ghost" onclick="triggerSOS()">🔴 SOS</button>
-      </div>
-    </div>
-
-    <!-- Debug -->
-    <div class="card">
-      <div style="display:flex;gap:8px;align-items:center">
-        <button class="btn-ghost" onclick="showRaw()">Tampilkan Raw</button>
-        <button class="btn-ghost" onclick="hideRaw()">Sembunyikan Raw</button>
-        <button class="btn-ghost" onclick="resetAll()">Reset Semua</button>
-        <div style="flex:1"></div>
-        <div class="small">Versi: Phase 1</div>
-      </div>
-      <pre id="rawBox" class="hidden" style="margin-top:8px;max-height:220px;overflow:auto"></pre>
-    </div>
-
-  </div> <!-- end app -->
+  <button onclick="logout()">Keluar</button>
 
 </div>
 
 <script>
-/* ---------- Core state & storage ---------- */
-const KEY = 'dp_phase1_v1';
-const NAMES_KEY = 'dp_names_v1';
-const PINS_KEY = 'dp_pins_v1';
-const PHOTOS_KEY = 'dp_photos_v1';
-const SETTINGS_KEY = 'dp_settings_v1';
+const KEY_ABSEN = "diary_absen";
+const KEY_PHOTO = "diary_photo";
+const KEY_NAMES = "diary_names";
 
-let state = JSON.parse(localStorage.getItem(KEY)) || [];
-let names = JSON.parse(localStorage.getItem(NAMES_KEY)) || {A:'Pasangan A', B:'Pasangan B'};
-let pins = JSON.parse(localStorage.getItem(PINS_KEY)) || {admin:'1234', A:'1111', B:'2222'};
-let photos = JSON.parse(localStorage.getItem(PHOTOS_KEY)) || [];
-let settings = JSON.parse(localStorage.getItem(SETTINGS_KEY)) || {notifMinutes:60, idleMinutes:5, requirePin:true};
+let absensi = JSON.parse(localStorage.getItem(KEY_ABSEN)) || [];
+let photos = JSON.parse(localStorage.getItem(KEY_PHOTO)) || [];
+let names = JSON.parse(localStorage.getItem(KEY_NAMES)) || {A:"Pasangan A", B:"Pasangan B"};
 
-let currentUser = null;
-let pendingAction = null;
-let notifTimers = {};
-let idleTimer = null;
-let lastActivity = Date.now();
+function login(){
+  const who = document.getElementById("loginAs").value;
+  const pin = document.getElementById("pin").value;
 
-/* UI refs */
-const lockCard = document.getElementById('lockCard');
-const appEl = document.getElementById('app');
-const loginAs = document.getElementById('loginAs');
-const pinInput = document.getElementById('pinInput');
-const nameA = document.getElementById('nameA');
-const nameB = document.getElementById('nameB');
-const notifMinutesEl = document.getElementById('notifMinutes');
-const timelineEl = document.getElementById('timeline');
-const photoGallery = document.getElementById('photoGallery');
-const monthSel = document.getElementById('monthSel');
-const yearSel = document.getElementById('yearSel');
-const calendarEl = document.getElementById('calendar');
-const totalCountEl = document.getElementById('totalCount');
-const statusModeEl = document.getElementById('statusMode');
-const rawBox = document.getElementById('rawBox');
-const clockEl = document.getElementById('clock');
-
-/* clock */
-setInterval(()=>{ clockEl.innerText = new Date().toLocaleTimeString(); },1000);
-
-/* Chart */
-const ctx = document.getElementById('activityChart').getContext('2d');
-let activityChart = new Chart(ctx, {
-  type:'bar',
-  data:{labels:[], datasets:[{label:'Pulang per hari', data:[], backgroundColor:'#16a34a'}]},
-  options:{responsive:true, maintainAspectRatio:false}
-});
-
-/* month/year fill */
-const monthNames = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
-(function fillMonthYear(){
-  const today = new Date();
-  for(let m=0;m<12;m++){ const o=document.createElement('option'); o.value=m; o.textContent=monthNames[m]; if(m===today.getMonth()) o.selected=true; monthSel.appendChild(o); }
-  for(let y=today.getFullYear()-2;y<=today.getFullYear()+2;y++){ const o=document.createElement('option'); o.value=y; o.textContent=y; if(y===today.getFullYear()) o.selected=true; yearSel.appendChild(o); }
-})();
-
-/* ----------------- helpers ----------------- */
-function saveAll(){ localStorage.setItem(KEY, JSON.stringify(state)); localStorage.setItem(NAMES_KEY, JSON.stringify(names)); localStorage.setItem(PINS_KEY, JSON.stringify(pins)); localStorage.setItem(PHOTOS_KEY, JSON.stringify(photos)); localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings)); updateCounts(); }
-function updateCounts(){ totalCountEl.innerText = state.length; }
-function timeNow(){ const d=new Date(); return {iso:d.toISOString(), str:d.toLocaleString()}; }
-function toast(msg){ try{ if(Notification && Notification.permission==='granted') new Notification('Diary Pasangan', {body:msg}); }catch(e){} console.log(msg); }
-
-/* ----------------- Login & settings ----------------- */
-function doLogin(){
-  const who = loginAs.value;
-  const pin = (pinInput.value||'').trim();
-  let ok = false;
-  if(who==='admin' && pin===pins.admin) ok=true;
-  if(who==='A' && pin===pins.A) ok=true;
-  if(who==='B' && pin===pins.B) ok=true;
-  if(!ok){ alert('PIN salah'); return; }
-  currentUser = who;
-  lockCard.style.display='none';
-  appEl.classList.remove('hidden');
-  nameA.value = names.A; nameB.value = names.B;
-  renderAll();
-  startIdleMonitor();
-}
-function openSettings(){
-  const adm = prompt('Masukkan PIN admin:');
-  if(adm !== pins.admin) return alert('PIN admin salah');
-  // small settings menu
-  const c = prompt('Pengaturan:\n1=Ganti Nama\n2=Ganti PIN\n3=Set Notif menit\nKetik 1/2/3','1');
-  if(c==='1'){ const na = prompt('Nama A:',names.A); const nb = prompt('Nama B:',names.B); if(na) names.A=na; if(nb) names.B=nb; saveAll(); renderAll(); alert('Nama disimpan'); }
-  if(c==='2'){ const who = prompt('PIN untuk (admin/A/B)','A'); if(!who) return; const old = prompt('PIN lama:'); if(old !== pins[who]) return alert('PIN lama salah'); const neu = prompt('PIN baru (min4):'); if(!neu||neu.length<4) return alert('PIN minimal 4'); pins[who]=neu; saveAll(); alert('PIN berubah'); }
-  if(c==='3'){ const m = prompt('Notifikasi menit:', String(settings.notifMinutes||60)); settings.notifMinutes = Number(m)||60; saveAll(); alert('Notifikasi diatur'); }
-}
-
-/* ----------------- Absence (keluar/pulang) ----------------- */
-function attemptAbs(person,type){
-  const pin = prompt('Masukkan PIN untuk '+person+':');
-  if((person==='A' && pin !== pins.A) || (person==='B' && pin !== pins.B)) return alert('PIN salah');
-  pendingAction = {person,type};
-  // open file picker to take photo as proof
-  document.getElementById('filePhoto').click();
-}
-document.getElementById('filePhoto').addEventListener('change', function(e){
-  const f = e.target.files[0]; if(!f || !pendingAction) return;
-  if(f.size > 2_000_000){ alert('Foto terlalu besar (>2MB). Pilih foto lebih kecil.'); e.target.value=''; pendingAction=null; return; }
-  const reader = new FileReader();
-  reader.onload = () => {
-    const photo = reader.result;
-    const t = timeNow();
-    if(!navigator.geolocation){ pushRecord(pendingAction.person,pendingAction.type,t.iso,t.str,'Lokasi tidak tersedia',photo); pendingAction=null; e.target.value=''; return; }
-    navigator.geolocation.getCurrentPosition(pos=>{
-      pushRecord(pendingAction.person,pendingAction.type,t.iso,t.str,pos.coords.latitude.toFixed(6)+','+pos.coords.longitude.toFixed(6),photo);
-      pendingAction=null; e.target.value='';
-    }, err=>{
-      pushRecord(pendingAction.person,pendingAction.type,t.iso,t.str,'Lokasi gagal',photo);
-      pendingAction=null; e.target.value='';
-    }, {enableHighAccuracy:true, timeout:8000});
-  };
-  reader.readAsDataURL(f);
-});
-
-/* push record */
-function pushRecord(person,type,iso,str,location,photo){
-  const rec = {person,type,timeISO:iso,timeStr:str,location,photo};
-  if(type==='keluar'){ rec.note='Keluar'; pendingAction['start_'+person] = Date.now(); scheduleReminder(person); }
-  if(type==='pulang'){ if(pendingAction['start_'+person]){ rec.durationMs = Date.now() - pendingAction['start_'+person']; delete pendingAction['start_'+person]; } clearReminder(person); }
-  state.push(rec); saveAll(); renderAll(); toast((names[person]||person)+' '+type);
-}
-
-/* reminder */
-function scheduleReminder(person){
-  clearReminder(person);
-  const mins = Number(settings.notifMinutes) || 60;
-  if(Notification && Notification.permission==='granted'){
-    notifTimers[person] = setTimeout(()=>{ new Notification('Pengingat Pulang', {body:(names[person]||person)+' belum tercatat pulang'}); }, mins*60000);
+  if(
+    (who === "A" && pin === "1111") ||
+    (who === "B" && pin === "2222")
+  ){
+    document.getElementById("login").classList.add("hidden");
+    document.getElementById("app").classList.remove("hidden");
+  } else {
+    alert("PIN salah!");
   }
 }
-function clearReminder(person){ if(notifTimers[person]){ clearTimeout(notifTimers[person]); delete notifTimers[person]; } }
 
-/* ----------------- Photo daily upload ----------------- */
-function uploadDaily(){
-  const f = document.getElementById('filePhoto').files[0];
-  const who = document.getElementById('photoPerson').value;
-  const note = document.getElementById('photoNote').value||'';
-  if(!f) return alert('Pilih foto terlebih dahulu');
-  if(f.size > 2_000_000) return alert('Foto terlalu besar (>2MB)');
-  const reader = new FileReader();
-  reader.onload = () => {
-    const t = timeNow();
-    photos.push({id:Date.now(), person:who, note, timeISO:t.iso, timeStr:t.str, photo:reader.result});
-    saveAll(); renderPhotos();
-    document.getElementById('photoNote').value='';
-    document.getElementById('filePhoto').value='';
-  };
-  reader.readAsDataURL(f);
+function logout(){
+  document.getElementById("login").classList.remove("hidden");
+  document.getElementById("app").classList.add("hidden");
 }
+
+function saveNames(){
+  names.A = nameA.value || "Pasangan A";
+  names.B = nameB.value || "Pasangan B";
+  localStorage.setItem(KEY_NAMES, JSON.stringify(names));
+  alert("Nama tersimpan");
+}
+
+function absen(){
+  const who = document.getElementById("absenWho").value;
+  const type = document.getElementById("absenType").value;
+  const t = new Date().toLocaleString();
+
+  absensi.push({id:Date.now(), who, type, time:t});
+  localStorage.setItem(KEY_ABSEN, JSON.stringify(absensi));
+  renderAbsen();
+}
+
+function renderAbsen(){
+  absenList.innerHTML = "";
+  absensi.slice().reverse().forEach(a=>{
+    const d = document.createElement("div");
+    d.className = "log";
+    d.textContent = `${names[a.who]} - ${a.type} - ${a.time}`;
+    absenList.appendChild(d);
+  });
+}
+
+function uploadPhoto(){
+  const f = photoFile.files[0];
+  if(!f) return alert("Pilih foto dulu");
+
+  const who = photoWho.value;
+  const r = new FileReader();
+
+  r.onload = ()=>{
+    photos.push({id:Date.now(), who, photo:r.result});
+    localStorage.setItem(KEY_PHOTO, JSON.stringify(photos));
+    renderPhotos();
+  };
+
+  r.readAsDataURL(f);
+}
+
 function renderPhotos(){
-  photoGallery.innerHTML = '';
+  gallery.innerHTML = "";
   photos.slice().reverse().forEach(p=>{
-    const div = document.createElement('div');
-    div.className='log-item';
-    div.innerHTML = `<div style="font-weight:700">${names[p.person]||p.person}</div><div class="small">${p.timeStr}</div><img class="thumb" src="${p.photo}"><div style="margin-top:6px">${p.note||''}</div><div style="margin-top:6px"><button class="btn-ghost" onclick="deletePhoto(${p.id})">Hapus</button></div>`;
-    photoGallery.appendChild(div);
-  });
-}
-function deletePhoto(id){ if(!confirm('Hapus foto?')) return; photos = photos.filter(p=>p.id!==id); saveAll(); renderPhotos(); }
-
-/* ----------------- Timeline ----------------- */
-function renderTimeline(){
-  timelineEl.innerHTML='';
-  state.slice().reverse().forEach((r,idx)=>{
-    const el = document.createElement('div'); el.className='log-item';
-    let html = `<div style="font-weight:700">${names[r.person]||r.person} ${r.type?('— '+r.type.toUpperCase()):''}</div><div class="small">${r.timeStr||''}</div>`;
-    if(r.location) html += `<div class="small">Lokasi: ${r.location}</div>`;
-    if(r.photo) html += `<img class="thumb" src="${r.photo}">`;
-    if(r.note) html += `<div class="small">${r.note}</div>`;
-    html += `<div style="margin-top:6px"><button class="btn-ghost" onclick="deleteRecord(${state.length-1-idx})">Hapus</button></div>`;
-    el.innerHTML = html;
-    timelineEl.appendChild(el);
+    const img = document.createElement("img");
+    img.src = p.photo;
+    gallery.appendChild(img);
   });
 }
 
-/* delete record by displayed index */
-function deleteRecord(displayIdx){
-  const idx = state.length-1-displayIdx;
-  if(!confirm('Hapus catatan?')) return;
-  state.splice(idx,1); saveAll(); renderAll();
-}
-
-/* ----------------- Calendar & Chart ----------------- */
-function renderCalendar(){
-  calendarEl.innerHTML='';
-  const month = Number(monthSel.value), year = Number(yearSel.value);
-  const first = new Date(year, month, 1), start = first.getDay(), days = new Date(year, month+1, 0).getDate();
-  for(let i=0;i<start;i++){ const b=document.createElement('div'); b.className='cal-day'; calendarEl.appendChild(b); }
-  for(let d=1; d<=days; d++){
-    const iso = new Date(year, month, d).toISOString().slice(0,10);
-    const events = state.filter(s=> s.timeISO && s.timeISO.slice(0,10)===iso);
-    const day = document.createElement('div'); day.className='cal-day' + (events.length? ' has':'');
-    day.innerHTML = `<div style="font-weight:700">${d} <div class="small">${monthNames[month]}</div>${events.length?'<div class="small" style="display:inline-block;background:var(--accent);color:#fff;padding:4px 8px;border-radius:999px;margin-left:6px">'+events.length+'</div>':''}</div>`;
-    day.onclick = ()=> openDay(iso);
-    calendarEl.appendChild(day);
-  }
-  updateChart();
-}
-function prevMonth(){ let m=Number(monthSel.value), y=Number(yearSel.value); m--; if(m<0){m=11;y--;} monthSel.value=m; yearSel.value=y; renderCalendar(); }
-function nextMonth(){ let m=Number(monthSel.value), y=Number(yearSel.value); m++; if(m>11){m=0;y++;} monthSel.value=m; yearSel.value=y; renderCalendar(); }
-function updateChart(){
-  const month = Number(monthSel.value), year = Number(yearSel.value); const days = new Date(year, month+1, 0).getDate();
-  const labels=[], arr=[];
-  for(let d=1; d<=days; d++){
-    labels.push(String(d));
-    const iso = new Date(year, month, d).toISOString().slice(0,10);
-    const cnt = state.filter(s=> s.timeISO && s.timeISO.slice(0,10)===iso && s.type==='pulang').length;
-    arr.push(cnt);
-  }
-  activityChart.data.labels = labels; activityChart.data.datasets[0].data = arr; activityChart.update();
-}
-function openDay(dateISO){
-  const events = state.filter(s=> s.timeISO && s.timeISO.slice(0,10)===dateISO);
-  let html = `<h3>Laporan ${dateISO}</h3><div>${names.A} & ${names.B}</div><hr>`;
-  if(events.length===0) html += '<p>Tidak ada aktivitas</p>';
-  events.forEach(ev=> html += `<div><b>${names[ev.person]||ev.person}</b> — ${ev.type}<br>${ev.timeStr}<br>Lokasi: ${ev.location||'-'}${ev.photo?'<br><img src="'+ev.photo+'" style="max-width:240px;margin-top:6px;border-radius:6px">':''}</div><hr>`);
-  const w = window.open('','_blank'); w.document.write(`<html><head><meta charset="utf-8"><title>Laporan ${dateISO}</title></head><body>${html}</body></html>`); w.document.close(); setTimeout(()=>w.print(),600);
-}
-
-/* ----------------- Export PDF / CSV ----------------- */
-function exportDayPDF(){
-  try{
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    const iso = new Date().toISOString().slice(0,10);
-    doc.setFontSize(14); doc.text(`Laporan ${iso}`, 10, 14);
-    let y=24;
-    const events = state.filter(s=> s.timeISO && s.timeISO.slice(0,10)===iso);
-    if(events.length===0) doc.text('Tidak ada aktivitas hari ini', 10, y);
-    events.forEach(ev=>{
-      doc.setFontSize(11);
-      doc.text(`${names[ev.person]||ev.person} - ${ev.type.toUpperCase()} - ${ev.timeStr}`, 10, y);
-      y+=8;
-      doc.text(`Lokasi: ${ev.location||'-'}`, 10, y); y+=8;
-      if(y>260){ doc.addPage(); y=20; }
-    });
-    doc.save(`laporan_${iso}.pdf`);
-  }catch(e){ alert('Gagal eksport PDF: '+(e.message||e)); }
-}
-function exportCSV(){
-  const sessions = buildSessions();
-  let csv = 'person,start,end,duration_min\n';
-  sessions.forEach(s=> csv += `${s.person},${s.start},${s.end},${Math.round(s.durationMs/60000)}\n`);
-  const blob = new Blob([csv],{type:'text/csv'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='rekap_sessions.csv'; a.click(); URL.revokeObjectURL(a.href);
-}
-
-/* sessions builder */
-function buildSessions(){
-  const by = {A:[],B:[]};
-  state.forEach(r=>{ if(r.person==='A'||r.person==='B') by[r.person].push(r); });
-  const sessions = [];
-  Object.keys(by).forEach(p=>{
-    by[p].sort((a,b)=> (a.timeISO||'').localeCompare(b.timeISO||''));
-    let open = null;
-    by[p].forEach(ev=>{
-      if(ev.type==='keluar') open = ev;
-      else if(ev.type==='pulang' && open){ sessions.push({person:p, start:open.timeISO, end:ev.timeISO, durationMs: new Date(ev.timeISO)-new Date(open.timeISO)}); open=null; }
-    });
-  });
-  return sessions;
-}
-
-/* ----------------- Backup / Restore / SOS ----------------- */
-function downloadBackup(){
-  const blob = new Blob([JSON.stringify({state,names,photos,settings,pins},null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='dp_backup.json'; a.click(); URL.revokeObjectURL(a.href);
-}
-function importBackup(e){
-  const f = e.target.files[0]; if(!f) return;
-  const r = new FileReader(); r.onload = ()=> {
-    try{
-      const obj = JSON.parse(r.result);
-      if(obj.state) state = obj.state;
-      if(obj.names) names = obj.names;
-      if(obj.photos) photos = obj.photos;
-      if(obj.settings) settings = obj.settings;
-      saveAll(); renderAll(); alert('Restore berhasil');
-    }catch(err){ alert('File tidak valid'); }
-  }; r.readAsText(f);
-}
-function triggerSOS(){
-  if(!navigator.geolocation) return alert('GPS tidak tersedia');
-  navigator.geolocation.getCurrentPosition(pos=>{
-    const t=timeNow();
-    state.push({type:'sos', timeISO:t.iso, timeStr:t.str, location:pos.coords.latitude.toFixed(6)+','+pos.coords.longitude.toFixed(6) });
-    saveAll(); renderAll(); try{ if(Notification.permission==='granted') new Notification('SOS tersimpan',{body:'Lokasi disimpan'}); }catch(e){} alert('SOS tersimpan'); 
-  }, err=>alert('Gagal ambil lokasi'));
-}
-
-/* ----------------- Auto-lock (idle) ----------------- */
-function startIdleMonitor(){
-  lastActivity = Date.now();
-  ['click','mousemove','keydown','touchstart'].forEach(ev => window.addEventListener(ev, ()=> lastActivity=Date.now()));
-  if(idleTimer) clearInterval(idleTimer);
-  idleTimer = setInterval(()=>{ if(Date.now() - lastActivity > (settings.idleMinutes || 5)*60000){ lockNow(); } }, 10000);
-}
-function lockNow(){ appEl.classList.add('hidden'); lockCard.style.display='block'; currentUser=null; }
-
-/* ----------------- Raw / reset ----------------- */
-function showRaw(){ rawBox.classList.remove('hidden'); rawBox.textContent = JSON.stringify({state,names,photos,settings,pins},null,2); }
-function hideRaw(){ rawBox.classList.add('hidden'); }
-function resetAll(){ if(!confirm('Hapus semua data?')) return; state=[]; photos=[]; saveAll(); renderAll(); alert('Selesai'); }
-
-/* ----------------- renderAll ----------------- */
-function renderAll(){
-  nameA.value = names.A; nameB.value = names.B;
-  statusModeEl.innerText = settings.together? 'Bersama' : 'Terpisah';
-  renderTimeline(); renderPhotos(); renderCalendar(); renderChat(); updateCounts();
-}
-function renderTimeline(){ timelineEl.innerHTML=''; state.slice().reverse().forEach(r=>{ const el=document.createElement('div'); el.className='log-item'; let html=`<div style="font-weight:700">${r.person||r.type}</div><div class="small">${r.timeStr||''}</div>`; if(r.location) html+=`<div class="small">Lokasi: ${r.location}</div>`; if(r.photo) html+=`<img class="thumb" src="${r.photo}">`; el.innerHTML=html; timelineEl.appendChild(el); }); }
-function renderPhotos(){ photoGallery.innerHTML=''; photos.slice().reverse().forEach(p=>{ const d=document.createElement('div'); d.className='log-item'; d.innerHTML=`<div style="font-weight:700">${names[p.person]||p.person}</div><div class="small">${p.timeStr}</div><img class="thumb" src="${p.photo}"><div style="margin-top:6px">${p.note||''}</div>`; photoGallery.appendChild(d); }); }
-function renderChat(){ /* placeholder for chat rendering (keamanan: chat disimpan sebagai state.type==='chat') */ }
-
-/* ----------------- small utilities ----------------- */
-function saveProfile(){ names.A = nameA.value||names.A; names.B = nameB.value||names.B; settings.notifMinutes = Number(document.getElementById('notifMinutes').value)||settings.notifMinutes; saveAll(); renderAll(); alert('Profil disimpan'); }
-function attemptAbs(p,t){ attemptAbs(p,t); } // just alias
-
-/* init */
-(function init(){
-  names = JSON.parse(localStorage.getItem(NAMES_KEY)) || names;
-  pins = JSON.parse(localStorage.getItem(PINS_KEY)) || pins;
-  photos = JSON.parse(localStorage.getItem(PHOTOS_KEY)) || photos;
-  settings = JSON.parse(localStorage.getItem(SETTINGS_KEY)) || settings;
-  renderAll();
-  // prefill month/year selects
-  monthSel.value = (new Date()).getMonth();
-  yearSel.value = (new Date()).getFullYear();
-  // request notification permission optional
-  if('Notification' in window && Notification.permission !== 'granted'){ /* ask later when user wants */ }
-})();
+nameA.value = names.A;
+nameB.value = names.B;
+renderAbsen();
+renderPhotos();
 </script>
+
 </body>
 </html>
