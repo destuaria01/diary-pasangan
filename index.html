@@ -3,218 +3,272 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Diary Pasangan — Final (Biometric)</title>
-<meta name="theme-color" content="#ff7fb5"/>
-<!-- Chart.js CDN -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<title>Diary Pasangan — FINAL</title>
+<meta name="theme-color" content="#0f172a"/>
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
   :root{
-    --bg:#fff5f9; --card:#fff; --text:#3b0f2f; --muted:#7a5668;
-    --accent:#ff6fa3; --accent-2:#ff7fb5; --success:#10b981; --danger:#ef4444;
+    --bg:#0f172a; --card:rgba(255,255,255,0.04); --glass:rgba(255,255,255,0.06);
+    --text:#e6eef8; --muted:rgba(230,238,248,0.7);
+    --accent1:#ff6fa3; --accent2:#7c3aed; --success:#10b981; --danger:#ef4444;
+    --glass-border: rgba(255,255,255,0.06);
   }
-  *{box-sizing:border-box}
-  body{margin:0;font-family:system-ui,Arial;background:var(--bg);color:var(--text);padding:12px}
-  .container{max-width:980px;margin:0 auto}
-  .card{background:var(--card);border-radius:12px;padding:14px;margin-bottom:12px;box-shadow:0 6px 18px rgba(0,0,0,.06)}
-  h1,h2{margin:0 0 8px 0}
-  label{display:block;margin-top:8px;color:var(--muted)}
-  input,select,textarea,button{font-size:14px}
-  input,select,textarea{width:100%;padding:10px;border-radius:10px;border:1px solid #f2d7e1;background:#fff}
-  textarea{min-height:80px;resize:vertical}
+  html,body{height:100%;margin:0;font-family:Inter,system-ui,Arial;background:linear-gradient(180deg,#071029 0%, #071734 100%);color:var(--text);-webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;}
+  .app{max-width:1100px;margin:16px auto;padding-bottom:80px}
+  header{display:flex;align-items:center;gap:12px;padding:14px;border-radius:12px;background:linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));box-shadow:0 6px 30px rgba(2,6,23,0.6);border:1px solid var(--glass-border)}
+  .brand{display:flex;gap:12px;align-items:center}
+  .logo{width:56px;height:56px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:700;background:linear-gradient(135deg,var(--accent1),var(--accent2));box-shadow:0 8px 20px rgba(123,31,162,0.18)}
+  h1{margin:0;font-size:18px}
+  .muted{color:var(--muted);font-size:13px}
+  .grid{display:grid;grid-template-columns:360px 1fr;gap:14px;margin-top:14px}
+  @media(max-width:920px){ .grid{grid-template-columns:1fr} .bottom-nav{display:flex} }
+  .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:12px;border-radius:12px;border:1px solid var(--glass-border);box-shadow:0 8px 20px rgba(2,6,23,0.45)}
+  label{font-size:13px;color:var(--muted);display:block;margin-top:8px}
+  input,select,textarea,button{font-size:14px;border-radius:10px;padding:10px;border:1px solid rgba(255,255,255,0.04);background:rgba(255,255,255,0.02);color:var(--text);outline:none}
+  textarea{min-height:90px;resize:vertical}
   .row{display:flex;gap:8px;align-items:center}
   .col{flex:1}
-  button{cursor:pointer;border:0;padding:10px 12px;border-radius:10px;color:#fff}
-  .btn-primary{background:linear-gradient(90deg,var(--accent),var(--accent-2))}
-  .btn-green{background:var(--success)}
-  .btn-red{background:var(--danger)}
-  .btn-ghost{background:transparent;border:1px solid #ddd;color:var(--muted)}
+  .btn{cursor:pointer;border:0;padding:10px 12px;border-radius:10px;color:#fff}
+  .btn-primary{background:linear-gradient(90deg,var(--accent1),var(--accent2));box-shadow:0 8px 18px rgba(124,58,237,0.12)}
+  .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
+  .btn-danger{background:var(--danger)}
   .small{font-size:13px;color:var(--muted)}
+  .log-item{padding:10px;border-radius:10px;margin-bottom:8px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));border:1px solid rgba(255,255,255,0.02)}
+  .photo{max-width:100%;border-radius:8px;margin-top:8px;border:1px solid rgba(255,255,255,0.03)}
   .cal{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-top:8px}
-  .cal-day{padding:8px;border-radius:8px;border:1px solid #ffeef6;min-height:64px;background:#fff}
-  .cal-day.has{border-color:var(--accent);box-shadow:0 6px 18px rgba(255,127,181,0.06)}
-  .log-item{border-radius:10px;padding:10px;border:1px solid #fde8f3;background:rgba(255,127,181,0.04);margin-bottom:8px}
-  .photo{max-width:100%;border-radius:8px;margin-top:8px}
+  .cal-day{padding:8px;border-radius:8px;border:1px dashed rgba(255,255,255,0.03);min-height:64px;position:relative;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00))}
+  .cal-day.has{box-shadow:0 6px 18px rgba(124,58,237,0.06);border:1px solid rgba(255,127,181,0.18)}
+  .badge{display:inline-block;background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff;padding:4px 8px;border-radius:999px;font-size:12px;margin-left:6px}
+  .status-pill{display:inline-block;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.03);color:var(--accent1);font-weight:700}
+  .bottom-nav{position:fixed;left:50%;transform:translateX(-50%);bottom:12px;background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:8px;border-radius:20px;display:none;gap:6px;z-index:999;width:92%;max-width:720px;justify-content:space-between;border:1px solid rgba(255,255,255,0.03)}
+  .tab{flex:1;padding:10px;border-radius:10px;text-align:center;color:var(--muted);cursor:pointer}
+  .tab.active{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff}
   .hidden{display:none}
-  .romantic-bg{background:linear-gradient(135deg,#ffafbd,#ffc3a0)}
-  .footer{font-size:13px;text-align:center;color:var(--muted);margin-top:12px}
-  pre{white-space:pre-wrap;word-break:break-word}
+  .overlay-privacy{position:fixed;inset:0;background:linear-gradient(180deg,rgba(2,6,23,0.85),rgba(2,6,23,0.95));display:flex;align-items:center;justify-content:center;z-index:1500}
+  .glass-blur{backdrop-filter:blur(6px);}
+  .switch{display:inline-flex;gap:8px;align-items:center}
+  .input-file{display:none}
+  .top-actions{display:flex;gap:8px;align-items:center}
+  .flex-center{display:flex;gap:8px;align-items:center}
+  .neon{box-shadow:0 6px 30px rgba(255,111,181,0.12)}
+  pre { color: #cfe8ff; background: rgba(0,0,0,0.15); padding:10px; border-radius:8px; overflow:auto }
 </style>
 </head>
 <body>
-<div class="container">
-  <h1>💖 Diary Pasangan — Final</h1>
-  <div class="small">Semua data disimpan lokal di perangkat. Web ini 1 file. Jika ingin install (PWA) beri tahu aku — bisa ditambahkan lagi.</div>
+<div class="app">
+  <header class="neon">
+    <div class="brand">
+      <div class="logo">DP</div>
+      <div>
+        <h1>Diary Pasangan — Sistem Canggih</h1>
+        <div class="muted">Privat · Offline-first · Instan</div>
+      </div>
+    </div>
+    <div style="margin-left:auto" class="flex-center">
+      <div class="small" id="timeNow"></div>
+      <div style="width:12px"></div>
+      <button class="btn btn-ghost" onclick="requestNotificationPermission()">Izinkan Notif</button>
+    </div>
+  </header>
 
-  <!-- LOCK / LOGIN -->
-  <div id="lock" class="card">
-    <h2>🔐 Masuk</h2>
+  <!-- LOCK -->
+  <div id="lockCard" class="card" style="margin-top:14px">
+    <h2>🔐 Masuk ke Diary</h2>
     <label>Masuk sebagai</label>
     <select id="loginAs">
       <option value="A">Pasangan A</option>
       <option value="B">Pasangan B</option>
       <option value="admin">Admin</option>
     </select>
-
     <label>PIN</label>
-    <input id="pinInput" type="password" placeholder="Masukkan PIN...">
-
+    <input id="pinInput" type="password" placeholder="Masukkan PIN">
     <div class="row" style="margin-top:10px">
-      <button class="btn-primary" onclick="doLogin()">Login (PIN)</button>
-      <button class="btn-ghost" id="bioBtn" onclick="loginWithBiometric()">Login Sidik Jari</button>
+      <button class="btn btn-primary" onclick="doLogin()">Login (PIN)</button>
+      <button class="btn btn-ghost" id="bioBtn" onclick="loginWithBiometric()">Login Sidik Jari</button>
     </div>
-
-    <div style="margin-top:10px;display:flex;gap:8px">
-      <button class="btn-ghost" onclick="infoBiometric()">Info Biometric</button>
-      <button class="btn-ghost" onclick="openSettings(true)">Pengaturan</button>
+    <div style="margin-top:10px" class="row">
+      <button class="btn btn-ghost" onclick="openSettings()">Pengaturan</button>
+      <button class="btn btn-ghost" onclick="infoBiometric()">Info Biometric</button>
     </div>
-
-    <div class="small" style="margin-top:8px">PIN default: admin=1234, A=1111, B=2222. Untuk biometric: daftarkan di Pengaturan → Daftar Sidik Jari.</div>
+    <div class="small" style="margin-top:8px">PIN default: admin=1234, A=1111, B=2222. Jika ingin fingerprint, daftar di Pengaturan → Daftar Biometric.</div>
   </div>
 
   <!-- APP -->
   <div id="app" class="hidden">
-    <div class="card">
-      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
-        <div style="flex:1">
-          <label>Nama Pasangan A</label>
-          <input id="nameA" placeholder="Nama A">
-        </div>
-        <div style="flex:1">
-          <label>Nama Pasangan B</label>
-          <input id="nameB" placeholder="Nama B">
-        </div>
-        <div style="width:220px">
-          <label>Notifikasi (menit)</label>
-          <input id="notifMinutes" type="number" min="1" value="60">
-        </div>
-      </div>
-      <div style="margin-top:10px" class="small">Atur profil dan notifikasi. Data tersimpan lokal.</div>
-      <div style="margin-top:10px">
-        <button class="btn-primary" onclick="saveProfile()">Simpan Profil</button>
-        <button class="btn-ghost" onclick="openPinManager()">Kelola PIN / Biometric</button>
-      </div>
-    </div>
+    <div class="grid">
+      <!-- LEFT SIDEBAR -->
+      <div>
+        <div class="card">
+          <div style="display:flex;gap:8px;align-items:center">
+            <div style="flex:1">
+              <label>Nama Pasangan A</label>
+              <input id="nameA">
+              <label>Nama Pasangan B</label>
+              <input id="nameB">
+            </div>
+          </div>
+          <div style="margin-top:8px" class="row">
+            <input id="notifMinutes" type="number" min="1" value="60" style="width:120px">
+            <button class="btn btn-primary" onclick="saveProfile()">Simpan Profil</button>
+          </div>
 
-    <div class="card">
-      <h3>Aksi dan Absensi</h3>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <div style="flex:1">
+          <hr style="margin:10px 0">
+
+          <div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <button class="btn btn-red" onclick="triggerSOS()">🔴 SOS</button>
+              <div class="small" id="sosInfo"></div>
+            </div>
+          </div>
+
+          <hr style="margin:10px 0">
+
+          <div>
+            <h4>Mode Khusus</h4>
+            <div style="display:flex;gap:8px;flex-direction:column">
+              <button class="btn btn-primary" onclick="toggleTogether()">Kami Sedang Bersama</button>
+              <button class="btn btn-ghost" onclick="togglePrivacyMode()">Mode Privasi Tinggi</button>
+              <button class="btn btn-ghost" onclick="openPinManager()">Kelola PIN / Biometric</button>
+            </div>
+            <div class="small" style="margin-top:8px">Mode Privasi menyembunyikan foto & raw, hanya PIN admin yang bisa mematikannya.</div>
+          </div>
+
+          <hr style="margin:10px 0">
+
+          <div>
+            <h4>Pesan Romantis (Offline)</h4>
+            <div class="small">Kirim pesan singkat ke timeline pasangan (tersimpan lokal).</div>
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <input id="quickMsg" placeholder="Tulis pesan...">
+              <button class="btn btn-primary" onclick="sendQuickMsg()">Kirim</button>
+            </div>
+          </div>
+
+          <hr style="margin:10px 0">
+
+          <div>
+            <h4>Backup / Restore</h4>
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <button class="btn btn-primary" onclick="downloadBackup()">Unduh Backup</button>
+              <button class="btn btn-primary" onclick="document.getElementById('importFile').click()">Restore File</button>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <button class="btn btn-ghost" onclick="exportCSV()">Export CSV</button>
+              <button class="btn btn-ghost" onclick="printToday()">Cetak Hari Ini</button>
+            </div>
+            <input id="importFile" type="file" accept="application/json" style="display:none" onchange="restoreFromFile(event)">
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:12px">
+          <h4>Foto Aktivitas Harian</h4>
           <div style="display:flex;gap:8px">
-            <button class="btn-red" onclick="startAbs('A','keluar')">A Keluar</button>
-            <button class="btn-green" onclick="startAbs('A','pulang')">A Pulang</button>
+            <select id="dailyPerson"><option value="A">A</option><option value="B">B</option></select>
+            <input id="dailyNote" placeholder="Keterangan (opsional)">
           </div>
-          <div id="statusA" class="small" style="margin-top:6px">Status A: -</div>
-          <label style="margin-top:8px">Diary A (pribadi)</label>
-          <textarea id="diaryA"></textarea>
-          <div style="display:flex;gap:8px;margin-top:6px">
-            <button class="btn-primary" onclick="saveDiary('A')">Simpan Diary A</button>
-            <button class="btn-ghost" onclick="downloadDiary('A')">Unduh A</button>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button class="btn btn-primary" onclick="openDailyCamera()">Upload Foto</button>
+            <button class="btn btn-ghost" onclick="clearDaily()">Bersihkan</button>
           </div>
-        </div>
-
-        <div style="flex:1">
-          <div style="display:flex;gap:8px">
-            <button class="btn-red" onclick="startAbs('B','keluar')">B Keluar</button>
-            <button class="btn-green" onclick="startAbs('B','pulang')">B Pulang</button>
-          </div>
-          <div id="statusB" class="small" style="margin-top:6px">Status B: -</div>
-          <label style="margin-top:8px">Diary B (pribadi)</label>
-          <textarea id="diaryB"></textarea>
-          <div style="display:flex;gap:8px;margin-top:6px">
-            <button class="btn-primary" onclick="saveDiary('B')">Simpan Diary B</button>
-            <button class="btn-ghost" onclick="downloadDiary('B')">Unduh B</button>
-          </div>
+          <div id="dailyGallery" style="margin-top:10px;max-height:260px;overflow:auto"></div>
         </div>
       </div>
 
-      <hr style="margin:12px 0">
+      <!-- RIGHT MAIN -->
+      <div>
+        <div class="card">
+          <div style="display:flex;gap:8px;align-items:center;justify-content:space-between">
+            <div>
+              <button class="btn btn-red" onclick="startAbs('A','keluar')">A Keluar</button>
+              <button class="btn btn-green" onclick="startAbs('A','pulang')">A Pulang</button>
+            </div>
+            <div style="display:flex;gap:8px">
+              <span class="status-pill" id="statusA">Status A: -</span>
+              <span class="status-pill" id="statusB">Status B: -</span>
+            </div>
+          </div>
 
-      <h4>📸 Foto Aktivitas Harian</h4>
-      <div class="row">
-        <select id="dailyPerson"><option value="A">A</option><option value="B">B</option></select>
-        <input id="dailyNote" placeholder="Keterangan (opsional)">
-        <button class="btn-primary" onclick="openDailyCamera()">Upload Foto</button>
-      </div>
-      <div id="dailyGallery" style="margin-top:10px"></div>
+          <div style="display:flex;gap:12px;margin-top:12px">
+            <div style="flex:1">
+              <label>Diary A (pribadi)</label>
+              <textarea id="diaryA"></textarea>
+              <div style="display:flex;gap:8px;margin-top:8px">
+                <button class="btn btn-primary" onclick="saveDiary('A')">Simpan</button>
+                <button class="btn btn-ghost" onclick="downloadDiary('A')">Unduh</button>
+              </div>
+            </div>
 
-      <div style="margin-top:10px">
-        <button class="btn-ghost" onclick="triggerSOS()">🔴 SOS (Simpan lokasi darurat)</button>
-        <div id="sosInfo" class="small" style="margin-top:8px"></div>
-      </div>
-    </div>
-
-    <div class="card">
-      <h3>Kalender & Grafik</h3>
-      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
-        <button class="btn-ghost" onclick="prevMonth()">◀</button>
-        <div style="flex:1;display:flex;gap:8px">
-          <select id="monthSel" onchange="renderCalendar()"></select>
-          <select id="yearSel" onchange="renderCalendar()"></select>
+            <div style="flex:1">
+              <label>Diary B (pribadi)</label>
+              <textarea id="diaryB"></textarea>
+              <div style="display:flex;gap:8px;margin-top:8px">
+                <button class="btn btn-primary" onclick="saveDiary('B')">Simpan</button>
+                <button class="btn btn-ghost" onclick="downloadDiary('B')">Unduh</button>
+              </div>
+            </div>
+          </div>
         </div>
-        <button class="btn-ghost" onclick="nextMonth()">▶</button>
-      </div>
-      <div id="calendar" class="cal"></div>
-      <h4 style="margin-top:10px">Grafik pulang per-hari</h4>
-      <canvas id="chart" height="120"></canvas>
-      <div class="small" style="margin-top:8px">Klik hari untuk cetak laporan.</div>
-    </div>
 
-    <div class="card">
-      <h3>Riwayat & Backup</h3>
-      <div id="timeline"></div>
-      <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
-        <button class="btn-primary" onclick="downloadBackup()">Unduh Backup (JSON)</button>
-        <button class="btn-primary" onclick="document.getElementById('importFile').click()">Restore dari File</button>
-        <button class="btn-primary" onclick="exportCSV()">Export CSV</button>
-        <button class="btn-green" onclick="printToday()">Cetak Laporan Hari Ini</button>
-        <button class="btn-ghost" onclick="showRaw()">Tampilkan Raw</button>
-        <button class="btn-ghost" onclick="hideRaw()">Sembunyikan Raw</button>
-        <button class="btn-red" onclick="resetAll()">Reset Semua Data</button>
-      </div>
-      <input id="importFile" type="file" accept="application/json" style="display:none" onchange="restoreFromFile(event)">
-      <pre id="raw" class="hidden"></pre>
-    </div>
+        <div class="card" style="margin-top:12px">
+          <h4>Timeline & Pesan</h4>
+          <div id="timeline" style="max-height:260px;overflow:auto"></div>
+        </div>
 
-    <div class="footer">Diary Pasangan — data hanya tersimpan di perangkat ini</div>
-  </div> <!-- end app -->
-</div> <!-- container -->
+        <div class="card" style="margin-top:12px">
+          <h4>Kalender & Grafik</h4>
+          <div style="display:flex;gap:8px;align-items:center">
+            <button class="btn btn-ghost" onclick="prevMonth()">◀</button>
+            <select id="monthSel" onchange="renderCalendar()"></select>
+            <select id="yearSel" onchange="renderCalendar()"></select>
+            <button class="btn btn-ghost" onclick="nextMonth()">▶</button>
+          </div>
+          <div id="calendar" class="cal"></div>
+          <h4 style="margin-top:10px">Grafik pulang per-hari</h4>
+          <canvas id="chart" height="120"></canvas>
+        </div>
+
+        <div class="card" style="margin-top:12px">
+          <div style="display:flex;gap:8px;align-items:center;justify-content:space-between">
+            <div class="small">Versi FINAL · Semua data lokal</div>
+            <div>
+              <button class="btn btn-ghost" onclick="showRaw()">Tampilkan Raw</button>
+              <button class="btn btn-ghost" onclick="hideRaw()">Sembunyikan Raw</button>
+            </div>
+          </div>
+          <pre id="raw" class="hidden"></pre>
+        </div>
+      </div>
+    </div> <!-- grid -->
+  </div> <!-- app -->
+</div>
 
 <!-- hidden inputs -->
 <input id="cameraInput" type="file" accept="image/*" capture="environment" style="display:none"/>
 <input id="dailyCamera" type="file" accept="image/*" capture="environment" style="display:none"/>
 
 <script>
-/* == SINGLE-FILE DIARY COUPLE (FINAL) ==
-   Features:
-   - PIN per account + ganti PIN
-   - WebAuthn biometric register/login (fallback ke PIN)
-   - Absensi keluar/pulang with camera + GPS
-   - Daily photo upload
-   - Calendar, chart, export, backup/restore
-   - SOS
-   - All localStorage only
-*/
+/* ===== FINAL SINGLE-FILE DIARY (with biometric + privacy + chat offline + modes) ===== */
 
-/* ---------- Storage keys ---------- */
-const KEY_STATE = "dp_final_state_v1";
+/* STORAGE */
+const KEY = "dp_final_all_v2";
 
-/* ---------- initial default state ---------- */
-let state = JSON.parse(localStorage.getItem(KEY_STATE)) || {
-  pins: {admin:"1234", A:"1111", B:"2222"},
-  names: {A:"Pasangan A", B:"Pasangan B"},
-  records: [], // {person,type,timeISO,timeStr,loc,photo,durationMs,note}
+/* default state */
+let state = JSON.parse(localStorage.getItem(KEY)) || {
+  pins: { admin:"1234", A:"1111", B:"2222" },
+  names: { A:"Pasangan A", B:"Pasangan B" },
+  records: [], // {person,type,timeISO,timeStr,location,photo,durationMs,note}
   daily: [], // {id,person,note,time,photo}
-  pendingStart: {}, // person -> timestamp
-  settings: {notifMinutes:60},
-  biometric: { // store registered credential id (base64url)
-    registered: false,
-    credentialId: null
-  }
+  messages: [], // {from,to,text,time}
+  pendingStart: {}, // person -> ts
+  settings: { notifMinutes:60 },
+  biometric: { registered:false, credentialId:null, lastUser:null },
+  privacy: { enabled:false, togetherMode:false }
 };
 
-/* ---------- UI refs ---------- */
-const lock = document.getElementById("lock");
-const app = document.getElementById("app");
+/* UI refs */
+const lockCard = document.getElementById("lockCard");
+const appEl = document.getElementById("app");
 const loginAs = document.getElementById("loginAs");
 const pinInput = document.getElementById("pinInput");
 const bioBtn = document.getElementById("bioBtn");
@@ -223,191 +277,159 @@ const nameB = document.getElementById("nameB");
 const notifMinutes = document.getElementById("notifMinutes");
 const statusA = document.getElementById("statusA");
 const statusB = document.getElementById("statusB");
-const timeline = document.getElementById("timeline");
+const timelineBox = document.getElementById("timeline");
 const dailyGallery = document.getElementById("dailyGallery");
-const dailyCamera = document.getElementById("dailyCamera");
 const cameraInput = document.getElementById("cameraInput");
+const dailyCamera = document.getElementById("dailyCamera");
 const rawBox = document.getElementById("raw");
 const sosInfo = document.getElementById("sosInfo");
-
-/* calendar/chart setup */
 const monthSel = document.getElementById("monthSel");
 const yearSel = document.getElementById("yearSel");
+const calendarEl = document.getElementById("calendar");
+const chartCtx = document.getElementById("chart").getContext('2d');
+const timeNowEl = document.getElementById("timeNow");
+
+let chart = new Chart(chartCtx, { type:'bar', data:{ labels:[], datasets:[{ label:'Pulang per hari', data:[], backgroundColor:[] }] }, options:{responsive:true, maintainAspectRatio:false} });
+
+/* calendar setup */
 const monthNames = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
 const today = new Date();
 let calMonth = today.getMonth(), calYear = today.getFullYear();
+for(let m=0;m<12;m++){ const o=document.createElement('option'); o.value=m; o.text=monthNames[m]; if(m===calMonth) o.selected=true; monthSel.appendChild(o);}
+for(let y=today.getFullYear()-2;y<=today.getFullYear()+2;y++){ const o=document.createElement('option'); o.value=y; o.text=y; if(y===calYear) o.selected=true; yearSel.appendChild(o);}
 
-const ctx = document.getElementById("chart").getContext('2d');
-let chart = new Chart(ctx, {type:'bar', data:{labels:[],datasets:[{label:'Pulang per hari',data:[],backgroundColor:[]} ]}, options:{responsive:true,maintainAspectRatio:false}});
+/* helpers */
+function saveState(){ localStorage.setItem(KEY, JSON.stringify(state)); }
+function timeNow(){ const d=new Date(); return { iso:d.toISOString(), str:d.toLocaleString() }; }
+function notify(title, body){ if("Notification" in window && Notification.permission === 'granted'){ try{ new Notification(title, { body }); }catch(e){} } }
+function formatShort(dt){ return new Date(dt).toLocaleString(); }
 
-/* ---------- helpers ---------- */
-function saveState(){ localStorage.setItem(KEY_STATE, JSON.stringify(state)); }
-function timeNow(){ const d=new Date(); return {iso:d.toISOString(), str:d.toLocaleString()}; }
-function base64UrlEncode(buf){ // ArrayBuffer -> base64url
-  const bytes = new Uint8Array(buf);
-  let binary = '';
-  for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]);
-  return btoa(binary).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
-}
-function base64UrlDecode(input){ // base64url -> Uint8Array
-  input = input.replace(/-/g,'+').replace(/_/g,'/');
-  const pad = input.length % 4;
-  if(pad) input += '='.repeat(4-pad);
-  const binary = atob(input);
-  const len = binary.length;
-  const bytes = new Uint8Array(len);
-  for(let i=0;i<len;i++) bytes[i] = binary.charCodeAt(i);
-  return bytes;
-}
+/* update clock */
+setInterval(()=>{ timeNowEl.innerText = new Date().toLocaleTimeString(); }, 1000);
 
-/* ---------- biometric (WebAuthn) ---------- */
-/*
-  NOTE: This is an offline/local WebAuthn implementation.
-  It uses locally generated challenge values (not server-signed).
-  Works on modern browsers that support platform authenticators.
-*/
-async function isWebAuthnAvailable(){
-  return !!(window.PublicKeyCredential && typeof window.PublicKeyCredential === "function");
-}
+/* biometric helpers (base64url) */
+function base64UrlEncode(buf){ const bytes = new Uint8Array(buf); let str=''; for(let i=0;i<bytes.length;i++) str+=String.fromCharCode(bytes[i]); return btoa(str).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); }
+function base64UrlDecode(str){ str = str.replace(/-/g,'+').replace(/_/g,'/'); while(str.length%4) str+='='; const bin = atob(str); const arr = new Uint8Array(bin.length); for(let i=0;i<bin.length;i++) arr[i]=bin.charCodeAt(i); return arr.buffer; }
 
+/* check WebAuthn */
+async function isWebAuthnAvailable(){ return !!(window.PublicKeyCredential && typeof window.PublicKeyCredential === 'function'); }
+
+/* register biometric */
 async function registerBiometric(){
   if(!await isWebAuthnAvailable()){ alert("Biometric/WebAuthn tidak didukung di browser ini."); return; }
   try{
-    // create random challenge
     const challenge = crypto.getRandomValues(new Uint8Array(32));
-    const pubKey = {
-      challenge: challenge,
-      rp: {name: "Diary Pasangan"},
-      user: {
-        id: crypto.getRandomValues(new Uint8Array(16)),
-        name: "local-user",
-        displayName: "DiaryPasanganUser"
-      },
-      pubKeyCredParams: [{alg: -7, type: "public-key"}],
-      authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "preferred" },
-      timeout: 60000,
-      attestation: "none"
+    const userId = crypto.getRandomValues(new Uint8Array(16));
+    const pub = {
+      challenge,
+      rp:{name:"DiaryPasangan"},
+      user:{id:userId, name:"localuser", displayName:"DiaryPasangan"},
+      pubKeyCredParams:[{alg:-7,type:'public-key'}],
+      authenticatorSelection:{ authenticatorAttachment:"platform", userVerification:"preferred" },
+      timeout:60000,
+      attestation:'none'
     };
-    const cred = await navigator.credentials.create({publicKey: pubKey});
-    if(!cred){ alert("Pendaftaran biometric dibatalkan"); return; }
-    // store credential id
-    const rawId = cred.rawId;
+    const cred = await navigator.credentials.create({ publicKey: pub });
+    if(!cred) return alert("Pendaftaran dibatalkan");
     state.biometric.registered = true;
-    state.biometric.credentialId = base64UrlEncode(rawId);
+    state.biometric.credentialId = base64UrlEncode(cred.rawId);
     saveState();
-    alert("Sidik jari / biometric terdaftar. Sekarang kamu dapat login menggunakan Login Sidik Jari.");
-  }catch(err){
-    console.error(err);
-    alert("Pendaftaran biometric gagal: "+(err.message||err));
-  }
+    alert("Biometric terdaftar. Kamu bisa login dengan Sidik Jari sekarang.");
+  }catch(err){ console.error(err); alert("Pendaftaran biometric gagal: "+(err.message||err)); }
 }
 
+/* login with biometric */
 async function loginWithBiometric(){
-  if(!state.biometric.registered || !state.biometric.credentialId){ alert("Belum ada credential biometric terdaftar. Silakan daftar di Pengaturan."); return; }
-  if(!await isWebAuthnAvailable()){ alert("WebAuthn tidak tersedia di browser ini."); return; }
+  if(!state.biometric.registered || !state.biometric.credentialId){ alert("Belum ada biometric terdaftar. Daftar dulu di Pengaturan."); return; }
+  if(!await isWebAuthnAvailable()){ alert("WebAuthn tidak tersedia."); return; }
   try{
     const challenge = crypto.getRandomValues(new Uint8Array(32));
-    const allowId = base64UrlDecode(state.biometric.credentialId);
     const publicKey = {
       challenge,
-      allowCredentials: [{type:"public-key", id: allowId}],
-      timeout: 60000,
-      userVerification: "preferred"
+      allowCredentials: [{ type:'public-key', id: base64UrlDecode(state.biometric.credentialId) }],
+      timeout:60000,
+      userVerification:'preferred'
     };
-    const assertion = await navigator.credentials.get({publicKey});
+    const assertion = await navigator.credentials.get({ publicKey });
     if(assertion){
-      // success — mark logged in as previously used account (we'll ask user which to log into)
-      const who = prompt("Biometric berhasil. Masuk sebagai (ketik A, B, atau admin):", "A");
-      if(who && (who==='A' || who==='B' || who==='admin')) {
-        doLoginWith(who); // login as chosen
-      } else {
-        alert("Masuk dibatalkan (pilih A/B/admin)");
-      }
+      // ask which account to log in as
+      const who = prompt("Autentikasi berhasil. Masuk sebagai (A / B / admin):", "A");
+      if(who && (who==='A'||who==='B'||who==='admin')) doLoginWith(who);
     }
-  }catch(err){
-    console.error(err);
-    alert("Autentikasi biometric gagal: "+(err.message||err));
-  }
+  }catch(err){ console.error(err); alert("Autentikasi biometric gagal: "+(err.message||err)); }
 }
 
-/* ---------- login / session ---------- */
+/* login */
 let currentUser = null;
-
 function doLogin(){
   const who = loginAs.value;
   const val = pinInput.value||"";
-  if(state.pins && state.pins[who] && val === state.pins[who]){
-    doLoginWith(who);
-  } else {
-    alert("PIN salah");
-  }
+  if(state.pins && state.pins[who] && val === state.pins[who]) doLoginWith(who);
+  else alert("PIN salah");
 }
-
 function doLoginWith(who){
   currentUser = who;
-  lock.style.display = "none";
-  app.classList.remove("hidden");
-  // apply values
+  lockCard.style.display = "none";
+  appEl.classList.remove("hidden");
+  // fill UI
   nameA.value = state.names.A;
   nameB.value = state.names.B;
   notifMinutes.value = state.settings.notifMinutes || 60;
   renderAll();
 }
 
-/* ---------- settings / pin management ---------- */
-function openSettings(autoAdmin=false){
-  // admin PIN required
+/* settings / pin manager */
+function openSettings(){
   const p = prompt("Masukkan PIN Admin:");
   if(p !== state.pins.admin) return alert("PIN admin salah");
-  // show settings UI prompt-based (simple)
-  const action = prompt("Pengaturan:\n1 = Ganti nama\n2 = Daftar Biometric\n3 = Hapus Biometric\n4 = Ganti PIN\nKetik nomor pilihan:", "1");
-  if(!action) return;
-  if(action === "1"){
+  const choice = prompt("Pengaturan:\n1 = Ganti Nama\n2 = Daftar Biometric\n3 = Hapus Biometric\n4 = Ganti PIN\n5 = Restore Backup Dari File\nKetik nomor:","1");
+  if(!choice) return;
+  if(choice==='1'){
     const na = prompt("Nama A:", state.names.A);
     const nb = prompt("Nama B:", state.names.B);
-    if(na) state.names.A = na;
-    if(nb) state.names.B = nb;
-    saveState();
-    renderAll();
-    alert("Nama disimpan");
-  } else if(action === "2"){
+    if(na) state.names.A = na; if(nb) state.names.B = nb; saveState(); renderAll(); alert("Nama disimpan");
+  } else if(choice==='2'){
     registerBiometric();
-  } else if(action === "3"){
-    if(confirm("Hapus credential biometric lokal?")){ state.biometric = {registered:false,credentialId:null}; saveState(); alert("Biometric dihapus"); }
-  } else if(action === "4"){
-    const who = prompt("Ganti PIN untuk siapa? (admin/A/B)", "A");
-    if(!who || !state.pins[who]) return alert("Pilihan tidak valid");
+  } else if(choice==='3'){
+    if(confirm("Hapus credential biometric?")){ state.biometric = {registered:false,credentialId:null,lastUser:null}; saveState(); alert("Biometric dihapus"); }
+  } else if(choice==='4'){
+    const who = prompt("Ganti PIN untuk? (admin/A/B)","A");
+    if(!who || !state.pins[who]) return alert("Pilihan invalid");
     const oldp = prompt("PIN lama:");
     if(oldp !== state.pins[who]) return alert("PIN lama salah");
     const neu = prompt("PIN baru (min 4):");
     if(!neu || neu.length<4) return alert("PIN minimal 4");
-    state.pins[who] = neu;
-    saveState();
-    alert("PIN berhasil diubah");
-  } else {
-    alert("Pilihan tidak diketahui");
-  }
+    state.pins[who] = neu; saveState(); alert("PIN diubah");
+  } else if(choice==='5'){
+    document.getElementById('importFile').click();
+  } else alert("Pilihan tidak valid");
 }
 
-/* ---------- absensi + camera + geolocation ---------- */
+/* profile save */
+function saveProfile(){
+  state.names.A = nameA.value || state.names.A;
+  state.names.B = nameB.value || state.names.B;
+  state.settings.notifMinutes = Number(notifMinutes.value) || 60;
+  saveState(); alert("Profil tersimpan"); renderAll();
+}
+
+/* absensi flow */
 let pendingAbs = null;
 function startAbs(person,type){
-  // ask PIN confirmation
-  const pin = prompt("Masukkan PIN untuk " + (person==='A'?state.names.A:person==='B'?state.names.B:'Admin'));
+  const pin = prompt("Masukkan PIN untuk " + (person==='A'?state.names.A: person==='B'?state.names.B:'Admin'));
   if(pin !== state.pins[person]) return alert("PIN salah");
   pendingAbs = {person,type};
   cameraInput.click();
 }
 
 cameraInput.addEventListener('change', function(e){
-  const f = e.target.files[0]; if(!f || !pendingAbs){ cameraInput.value=""; return; }
+  const f = e.target.files[0]; if(!f || !pendingAbs){ cameraInput.value=''; return; }
   const reader = new FileReader();
   reader.onload = function(){
     const photo = reader.result;
     const t = timeNow();
-    if(!navigator.geolocation){
-      pushRecord(pendingAbs.person,pendingAbs.type,t.iso,t.str,"Lokasi tidak tersedia",photo);
-    } else {
+    if(!navigator.geolocation){ pushRecord(pendingAbs.person,pendingAbs.type,t.iso,t.str,"Lokasi tidak tersedia",photo); }
+    else {
       navigator.geolocation.getCurrentPosition(pos=>{
         const loc = pos.coords.latitude.toFixed(6)+","+pos.coords.longitude.toFixed(6);
         pushRecord(pendingAbs.person,pendingAbs.type,t.iso,t.str,loc,photo);
@@ -415,7 +437,7 @@ cameraInput.addEventListener('change', function(e){
         pushRecord(pendingAbs.person,pendingAbs.type,t.iso,t.str,"Lokasi gagal",photo);
       }, {enableHighAccuracy:true, timeout:10000});
     }
-    pendingAbs = null; cameraInput.value="";
+    pendingAbs = null; cameraInput.value='';
   };
   reader.readAsDataURL(f);
 });
@@ -423,95 +445,122 @@ cameraInput.addEventListener('change', function(e){
 /* push record */
 let notifTimers = {};
 function pushRecord(person,type,iso,str,loc,photo){
-  const rec = {person,type,timeISO:iso,timeStr:str,location:loc,photo};
-  if(type === 'keluar'){ state.pendingStart[person] = Date.now(); scheduleReminder(person); }
-  if(type === 'pulang'){ if(state.pendingStart[person]){ rec.durationMs = Date.now() - state.pendingStart[person]; delete state.pendingStart[person]; } clearReminder(person); }
-  state.records.push(rec);
-  saveState(); renderAll();
-  try{ if(Notification && Notification.permission === 'granted') new Notification("Absensi tersimpan", {body: (state.names[person]||person)+" "+type}); }catch(e){}
+  const rec = { person, type, timeISO:iso, timeStr:str, location:loc, photo, note:null };
+  if(type==='keluar'){ state.pendingStart[person] = Date.now(); scheduleReminder(person); }
+  if(type==='pulang'){ if(state.pendingStart[person]){ rec.durationMs = Date.now() - state.pendingStart[person]; delete state.pendingStart[person]; } clearReminder(person); }
+  state.records.push(rec); saveState(); renderAll();
+  notify("Absensi tersimpan", (state.names[person]||person) + " " + type);
 }
 
 function scheduleReminder(person){
   clearReminder(person);
-  const mins = Number(notifMinutes.value)||state.settings.notifMinutes||60;
-  if(Notification && Notification.permission === 'granted'){
-    notifTimers[person] = setTimeout(()=>{ try{ new Notification("Pengingat pulang", {body:(state.names[person]||person)+" belum pulang"}); }catch(e){} }, mins*60000);
+  const mins = Number(notifMinutes.value) || state.settings.notifMinutes || 60;
+  if("Notification" in window && Notification.permission === 'granted'){
+    notifTimers[person] = setTimeout(()=>{ try{ new Notification("Pengingat pulang", { body:(state.names[person]||person)+" belum pulang" }); }catch(e){} }, mins*60000);
   }
 }
 function clearReminder(person){ if(notifTimers[person]){ clearTimeout(notifTimers[person]); delete notifTimers[person]; } }
 function clearAllReminders(){ Object.keys(notifTimers).forEach(k=>clearReminder(k)); }
 
-/* ---------- daily photos ---------- */
-const dailyCam = document.getElementById("dailyCamera");
-dailyCam.addEventListener('change', function(e){
+/* daily photos */
+dailyCamera.addEventListener('change', function(e){
   const f = e.target.files[0]; if(!f) return;
   const reader = new FileReader();
   reader.onload = function(){
-    const obj = {id:Date.now(), person:document.getElementById('dailyPerson').value || 'A', note:document.getElementById('dailyNote').value||'', time:timeNow().str, photo:reader.result};
-    state.daily.push(obj); saveState(); renderDaily(); document.getElementById('dailyNote').value=''; dailyCam.value='';
+    const obj = { id:Date.now(), person: document.getElementById('dailyPerson').value || 'A', note: document.getElementById('dailyNote').value || '', time: timeNow().str, photo: reader.result };
+    state.daily.push(obj); saveState(); renderDaily(); document.getElementById('dailyNote').value=''; dailyCamera.value='';
   };
   reader.readAsDataURL(f);
 });
-function openDailyCamera(){ dailyCam.click(); }
-function renderDaily(){ dailyGallery.innerHTML=''; state.daily.slice().reverse().forEach(d=>{ const div=document.createElement('div'); div.className='log-item'; div.innerHTML=`<div style="font-weight:700">${state.names[d.person]||d.person} — <span class="small">${d.time}</span></div><div class="small">Keterangan: ${d.note}</div><img class="photo" src="${d.photo}"/><div style="margin-top:6px"><button class="btn-ghost" onclick="deleteDaily(${d.id})">Hapus</button></div>`; dailyGallery.appendChild(div); }); }
+function openDailyCamera(){ dailyCamera.click(); }
+function renderDaily(){ dailyGallery.innerHTML=''; state.daily.slice().reverse().forEach(d=>{ const div=document.createElement('div'); div.className='log-item'; const photoHtml = state.privacy.enabled ? '<div class="small">[Foto tersembunyi di Mode Privasi]</div>' : `<img class="photo" src="${d.photo}"/>`; div.innerHTML = `<div style="font-weight:700">${state.names[d.person]} <span class="small">${d.time}</span></div><div class="small">Keterangan: ${d.note}</div>${photoHtml}<div style="margin-top:6px"><button class="btn btn-ghost" onclick="deleteDaily(${d.id})">Hapus</button></div>`; dailyGallery.appendChild(div); }); }
 
-/* ---------- render timeline & lists ---------- */
+/* messages offline */
+function sendQuickMsg(){
+  const txt = document.getElementById('quickMsg').value || '';
+  if(!txt) return alert('Tulis pesan dulu');
+  const who = prompt("Kirim pesan ke siapa? (A atau B)","B");
+  if(!who || (who!=='A' && who!=='B')) return alert('Pilih A atau B');
+  const t = timeNow();
+  state.messages.push({ from: currentUser || 'A', to: who, text: txt, time: t.str });
+  saveState(); document.getElementById('quickMsg').value=''; renderAll();
+}
+
+/* render timeline and messages */
 function renderAll(){
   // names
-  nameA.value = state.names.A; nameB.value = state.names.B;
-  notifMinutes.value = state.settings.notifMinutes || 60;
+  nameA.value = state.names.A; nameB.value = state.names.B; notifMinutes.value = state.settings.notifMinutes || 60;
+  // privacy UI
+  if(state.privacy.enabled){
+    // overlay and hide photos
+    document.body.classList.add('overlay'); // not used for styling but reserved
+  } else {
+    document.body.classList.remove('overlay');
+  }
   // timeline
-  timeline.innerHTML = '';
-  state.records.slice().reverse().forEach((r,idx)=> {
+  timelineBox.innerHTML='';
+  // merge records + messages + daily for timeline
+  const items = [];
+  state.records.forEach(r=> items.push({ t: r.timeISO, type:'record', data:r }));
+  state.messages.forEach(m=> items.push({ t: (new Date()).toISOString(), type:'msg', data:m })); // messages ordering simple
+  state.daily.forEach(d=> items.push({ t: d.time, type:'daily', data:d }));
+  // sort by time descending
+  items.sort((a,b)=> (''+b.t).localeCompare(a.t+''));
+  items.forEach(it=>{
     const div = document.createElement('div'); div.className='log-item';
-    const mapLink = (r.location && r.location.indexOf(",")>-1) ? ` <a target="_blank" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(r.location)}">Maps</a>` : '';
-    div.innerHTML = `<div style="font-weight:700">${state.names[r.person]||r.person} — <span style="color:${r.type==='keluar'?'var(--danger)':'var(--success)'}">${r.type.toUpperCase()}</span></div><div class="small">${r.timeStr}</div><div class="small">Lokasi: ${r.location||'-'} ${mapLink}</div>${r.photo?'<img class="photo" src="'+r.photo+'">':''}${r.durationMs?'<div class="small">Durasi: '+Math.round(r.durationMs/60000)+' menit</div>':''}<div style="margin-top:6px"><button class="btn-ghost" onclick="deleteRecord('+idx+')">Hapus</button></div>`;
-    timeline.appendChild(div);
+    if(it.type==='record'){
+      const r = it.data;
+      const mapLink = (r.location && r.location.indexOf(',')>-1) ? ` <a target="_blank" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(r.location)}">Maps</a>` : '';
+      const photoHtml = (r.photo && !state.privacy.enabled) ? `<img class="photo" src="${r.photo}"/>` : (r.photo ? '<div class="small">[Foto disembunyikan di Mode Privasi]</div>' : '');
+      div.innerHTML = `<div style="font-weight:700">${state.names[r.person]} — <span style="color:${r.type==='keluar'?'#ff6b6b':'#10b981'}">${r.type.toUpperCase()}</span></div><div class="small">${r.timeStr}</div><div class="small">Lokasi: ${r.location||'-'} ${mapLink}</div>${photoHtml}<div style="margin-top:6px"><button class="btn btn-ghost" onclick="deleteRecord(${state.records.indexOf(r)})">Hapus</button></div>`;
+    } else if(it.type==='msg'){
+      const m = it.data;
+      div.innerHTML = `<div style="font-weight:700">${m.from} → ${m.to}</div><div class="small">${m.time}</div><div style="margin-top:6px">${m.text}</div>`;
+    } else if(it.type==='daily'){
+      const d = it.data;
+      const photoHtml = state.privacy.enabled ? '<div class="small">[Foto tersembunyi]</div>' : `<img class="photo" src="${d.photo}"/>`;
+      div.innerHTML = `<div style="font-weight:700">${state.names[d.person]} — <span class="small">${d.time}</span></div><div class="small">Keterangan: ${d.note}</div>${photoHtml}<div style="margin-top:6px"><button class="btn btn-ghost" onclick="deleteDaily(${d.id})">Hapus</button></div>`;
+    }
+    timelineBox.appendChild(div);
   });
-  // diary textareas
-  document.getElementById('diaryA').value = localStorage.getItem('dp_diary_A')||'';
-  document.getElementById('diaryB').value = localStorage.getItem('dp_diary_B')||'';
-  // status
+
+  // diaries
+  document.getElementById('diaryA') && (document.getElementById('diaryA').value = localStorage.getItem('dp_diary_A')||'');
+  document.getElementById('diaryB') && (document.getElementById('diaryB').value = localStorage.getItem('dp_diary_B')||'');
+  // statuses
   document.getElementById('statusA').innerText = state.pendingStart['A'] ? 'A sedang keluar (timer aktif)' : 'Status A: -';
   document.getElementById('statusB').innerText = state.pendingStart['B'] ? 'B sedang keluar (timer aktif)' : 'Status B: -';
   renderCalendar(); updateChart(); renderDaily();
 }
 
-/* ---------- delete / download ---------- */
+/* delete functions */
 function deleteRecord(idx){ if(!confirm('Hapus catatan?')) return; state.records.splice(idx,1); saveState(); renderAll(); }
-function deleteDaily(id){ if(!confirm('Hapus foto aktivitas?')) return; state.daily = state.daily.filter(x=>x.id!==id); saveState(); renderDaily(); }
+function deleteDaily(id){ state.daily = state.daily.filter(x=>x.id!==id); saveState(); renderDaily(); }
+function clearDaily(){ if(!confirm('Hapus semua foto aktivitas?')) return; state.daily = []; saveState(); renderDaily(); }
 
-/* ---------- diary save / download ---------- */
-function saveDiary(person){
-  const key = person==='A' ? 'dp_diary_A' : 'dp_diary_B';
-  const val = person==='A' ? document.getElementById('diaryA').value : document.getElementById('diaryB').value;
-  localStorage.setItem(key, val);
-  alert('Diary tersimpan');
-}
-function downloadDiary(person){
-  const key = person==='A' ? 'dp_diary_A' : 'dp_diary_B';
-  const blob = new Blob([localStorage.getItem(key) || ''], {type:'text/plain'});
-  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'diary_'+person+'.txt'; a.click(); URL.revokeObjectURL(a.href);
-}
+/* diaries */
+function saveDiary(person){ const key = person==='A'?'dp_diary_A':'dp_diary_B'; const val = person==='A'?document.getElementById('diaryA').value:document.getElementById('diaryB').value; localStorage.setItem(key, val); alert('Diary tersimpan'); }
 
-/* ---------- calendar & chart ---------- */
-for(let m=0;m<12;m++){ const o=document.createElement('option'); o.value=m; o.text=monthNames[m]; if(m===calMonth) o.selected=true; monthSel.appendChild(o); }
-for(let y=today.getFullYear()-2;y<=today.getFullYear()+2;y++){ const o=document.createElement('option'); o.value=y; o.text=y; if(y===calYear) o.selected=true; yearSel.appendChild(o); }
+/* download diary */
+function downloadDiary(person){ const key = person==='A'?'dp_diary_A':'dp_diary_B'; const blob = new Blob([localStorage.getItem(key) || ''], {type:'text/plain'}); const a=document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'diary_'+person+'.txt'; a.click(); URL.revokeObjectURL(a.href); }
 
+/* calendar & chart */
 function renderCalendar(){
-  const cal = document.getElementById('calendar'); cal.innerHTML='';
+  calendarEl.innerHTML = '';
   const month = Number(monthSel.value); const year = Number(yearSel.value);
   const first = new Date(year, month, 1); const start = first.getDay(); const days = new Date(year, month+1, 0).getDate();
-  for(let i=0;i<start;i++){ const b=document.createElement('div'); b.className='cal-day'; cal.appendChild(b); }
+  for(let i=0;i<start;i++){ const b=document.createElement('div'); b.className='cal-day'; calendarEl.appendChild(b); }
   for(let d=1; d<=days; d++){
-    const dateISO = new Date(year,month,d).toISOString().slice(0,10);
+    const dateISO = new Date(year, month, d).toISOString().slice(0,10);
     const events = state.records.filter(e=>e.timeISO.slice(0,10)===dateISO);
     const day = document.createElement('div'); day.className='cal-day'; if(events.length) day.classList.add('has');
     day.innerHTML = `<div style="font-weight:700">${d} <span class="small">${monthNames[month]}</span> ${events.length?'<span class="badge">'+events.length+'</span>':''}</div>`;
     day.onclick = ()=> openDay(dateISO);
-    cal.appendChild(day);
+    calendarEl.appendChild(day);
   }
 }
+function prevMonth(){ let m=Number(monthSel.value), y=Number(yearSel.value); m--; if(m<0){m=11;y--;} monthSel.value=m; yearSel.value=y; renderCalendar(); }
+function nextMonth(){ let m=Number(monthSel.value), y=Number(yearSel.value); m++; if(m>11){m=0;y++;} monthSel.value=m; yearSel.value=y; renderCalendar(); }
 
 function updateChart(){
   const month = Number(monthSel.value), year = Number(yearSel.value);
@@ -526,105 +575,109 @@ function updateChart(){
   chart.data.labels = labels; chart.data.datasets[0].data = counts; chart.data.datasets[0].backgroundColor = colors; chart.update();
 }
 
-/* ---------- open day detail & print ---------- */
+/* open day detail / print */
 function openDay(dateISO){
   const events = state.records.filter(e=>e.timeISO.slice(0,10)===dateISO);
   let html = `<h2>Laporan ${dateISO}</h2><p>${state.names.A} & ${state.names.B}</p><hr>`;
   if(events.length===0) html += '<p>Tidak ada aktivitas</p>';
-  events.forEach(ev=> html += `<div><b>${state.names[ev.person]||ev.person}</b> — ${ev.type.toUpperCase()}<br>${ev.timeStr}<br>Lokasi: ${ev.location||'-'}<br>${ev.photo?'<img style="max-width:240px;border-radius:8px;margin-top:6px" src="'+ev.photo+'"/>':''}${ev.durationMs?'<div>Durasi: '+Math.round(ev.durationMs/60000)+' menit</div>':''}</div><hr>`);
-  const w = window.open('','_blank'); w.document.write(`<html><head><title>Laporan ${dateISO}</title><meta name="viewport" content="width=device-width,initial-scale=1"/></head><body>${html}</body></html>`); w.document.close(); w.focus(); setTimeout(()=>w.print(),600);
+  events.forEach(ev=> html += `<div><b>${state.names[ev.person]||ev.person}</b> — ${ev.type.toUpperCase()}<br>${ev.timeStr}<br>Lokasi: ${ev.location||'-'}<br>${ev.photo?'<img style="max-width:240px;border-radius:8px;margin-top:6px" src="'+ev.photo+'">':''}${ev.durationMs?'<div>Durasi: '+Math.round(ev.durationMs/60000)+' menit</div>':''}</div><hr>`);
+  const w = window.open('','_blank'); w.document.write(`<html><head><title>Laporan ${dateISO}</title><meta name="viewport" content="width=device-width,initial-scale=1"/></head><body>${html}</body></html>`); w.document.close(); setTimeout(()=>w.print(),600);
 }
 
-/* ---------- export/backup ---------- */
-function downloadBackup(){
-  const blob = new Blob([JSON.stringify({state},null,2)], {type:'application/json'});
-  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download='dp_backup.json'; a.click(); URL.revokeObjectURL(a.href);
-}
-function restoreFromFile(e){
-  const f = e.target.files[0]; if(!f) return;
-  const r = new FileReader(); r.onload = ()=> {
-    try{
-      const obj = JSON.parse(r.result);
-      if(obj.state) { state = obj.state; saveState(); renderAll(); alert('Restore berhasil'); }
-      else alert('File tidak cocok');
-    }catch(err){ alert('File tidak valid'); }
-  }; r.readAsText(f);
-}
-function exportCSV(){
-  let csv = 'person,type,timeISO,timeStr,location,durationMin\n';
-  const sessions = buildSessions();
-  sessions.forEach(s=> csv += `${s.person},session,${s.start},${s.end},-,${Math.round(s.durationMs/60000)}\n`);
-  const blob = new Blob([csv],{type:'text/csv'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='dp_rekap.csv'; a.click(); URL.revokeObjectURL(a.href);
-}
-function printToday(){ const iso = new Date().toISOString().slice(0,10); openDay(iso); }
+/* export / backup */
+function downloadBackup(){ const blob = new Blob([JSON.stringify(state,null,2)], {type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='dp_backup.json'; a.click(); URL.revokeObjectURL(a.href); }
+function restoreFromFile(e){ const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{ try{ const obj=JSON.parse(r.result); if(obj && obj.pins){ state = obj; saveState(); renderAll(); alert('Restore berhasil'); } else alert('File tidak cocok'); }catch(err){ alert('File tidak valid'); } }; r.readAsText(f); }
+function exportCSV(){ let csv = 'person,type,start,end,duration_min\\n'; const sess=buildSessions(); sess.forEach(s=> csv+=`${s.person},session,${s.start},${s.end},${Math.round(s.durationMs/60000)}\\n`); const b=new Blob([csv],{type:'text/csv'}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='dp_rekap.csv'; a.click(); URL.revokeObjectURL(a.href); }
+function printToday(){ openDay(new Date().toISOString().slice(0,10)); }
 
-/* ---------- session builder ---------- */
-function buildSessions(){
-  const by = {A:[],B:[]};
-  state.records.forEach(d=>{ if(d.person==='A'||d.person==='B') by[d.person].push(d); });
-  const sessions = [];
-  Object.keys(by).forEach(p=>{
-    const arr = by[p].sort((a,b)=>a.timeISO.localeCompare(b.timeISO));
-    let open = null;
-    arr.forEach(ev=>{
-      if(ev.type==='keluar') open = ev;
-      if(ev.type==='pulang' && open){ sessions.push({person:p,start:open.timeISO,end:ev.timeISO,durationMs:new Date(ev.timeISO)-new Date(open.timeISO)}); open=null; }
-    });
-  });
-  return sessions;
+/* sessions builder */
+function buildSessions(){ const by={A:[],B:[]}; state.records.forEach(d=>{ if(d.person==='A'||d.person==='B') by[d.person].push(d); }); const sessions=[]; Object.keys(by).forEach(p=>{ by[p].sort((a,b)=>a.timeISO.localeCompare(b.timeISO)); let open=null; by[p].forEach(ev=>{ if(ev.type==='keluar') open=ev; if(ev.type==='pulang'&&open){ sessions.push({person:p,start:open.timeISO,end:ev.timeISO,durationMs:new Date(ev.timeISO)-new Date(open.timeISO)}); open=null; } }); }); return sessions; }
+
+/* analysis */
+function runAnalysis(){ const s=buildSessions(); alert('Sesi A: '+s.filter(x=>x.person==='A').length+' / B: '+s.filter(x=>x.person==='B').length); }
+
+/* quick msg & chat already in state.messages */
+
+/* sos */
+function triggerSOS(){ if(!navigator.geolocation) return alert('Lokasi tidak tersedia'); navigator.geolocation.getCurrentPosition(pos=>{ const loc=pos.coords.latitude.toFixed(6)+','+pos.coords.longitude.toFixed(6); const t=timeNow(); state.records.push({person:'A',type:'sos',timeISO:t.iso,timeStr:t.str,location:loc}); saveState(); renderAll(); sosInfo.innerText = `SOS: ${t.str} (${loc})`; notify('SOS tersimpan','Lokasi darurat tersimpan'); }, ()=> alert('Gagal ambil lokasi')); }
+
+/* privacy mode */
+function togglePrivacyMode(){
+  const p = prompt("Masukkan PIN Admin untuk toggle Mode Privasi:");
+  if(p !== state.pins.admin) return alert("PIN admin salah");
+  state.privacy.enabled = !state.privacy.enabled;
+  saveState(); renderAll();
+  alert("Mode Privasi " + (state.privacy.enabled ? "Aktif" : "Nonaktif"));
 }
 
-/* ---------- analysis ---------- */
-function runAnalysis(){
-  const sessions = buildSessions();
-  alert('Analisis: total sesi A='+sessions.filter(s=>s.person==='A').length+' / B='+sessions.filter(s=>s.person==='B').length);
-}
-
-/* ---------- SOS ---------- */
-function triggerSOS(){
-  if(!navigator.geolocation) return alert('Lokasi tidak tersedia');
-  navigator.geolocation.getCurrentPosition(pos=>{
-    const loc = pos.coords.latitude.toFixed(6)+','+pos.coords.longitude.toFixed(6);
+/* together mode */
+function toggleTogether(){
+  state.privacy.togetherMode = !state.privacy.togetherMode;
+  if(state.privacy.togetherMode){
+    // disable reminders
+    clearAllReminders();
+    notify("Mode Bersama", "Notifikasi pulang dinonaktifkan sementara");
+    // record event
     const t = timeNow();
-    state.records.push({person:'A',type:'sos',timeISO:t.iso,timeStr:t.str,location:loc});
-    saveState(); renderAll();
-    sosInfo.innerText = `SOS disimpan: ${t.str} (${loc})`;
-    try{ if(Notification && Notification.permission==='granted') new Notification('SOS tersimpan',{body:'Lokasi darurat tersimpan'}); }catch(e){}
-  }, ()=> alert('Gagal ambil lokasi'));
+    state.records.push({person:'A',type:'together',timeISO:t.iso,timeStr:t.str,location:'-'}); saveState();
+  } else {
+    notify("Mode Bersama", "Notifikasi pulang kembali normal");
+  }
+  saveState(); renderAll();
 }
 
-/* ---------- notifications ---------- */
-function requestNotificationPermission(){ if(!('Notification' in window)) return alert('Notifikasi tidak didukung'); Notification.requestPermission().then(r=>alert('Permission: '+r)); }
+/* pin manager */
+function openPinManager(){
+  openSettings();
+}
 
-/* ---------- raw / reset ---------- */
+/* camera for daily already connected */
+
+/* delete helpers above */
+
+/* show/hide raw */
 function showRaw(){ rawBox.classList.remove('hidden'); rawBox.textContent = JSON.stringify(state,null,2); }
 function hideRaw(){ rawBox.classList.add('hidden'); }
-function resetAll(){ if(!confirm('Hapus semua data lokal?')) return; state = {pins:{admin:'1234',A:'1111',B:'2222'},names:{A:'Pasangan A',B:'Pasangan B'},records:[],daily:[],pendingStart:{},settings:{notifMinutes:60},biometric:{registered:false,credentialId:null}}; saveState(); renderAll(); alert('Reset selesai'); }
 
-/* ---------- init ---------- */
+/* reset */
+function resetAll(){ if(!confirm('Hapus semua data lokal?')) return; state = { pins:{admin:'1234',A:'1111',B:'2222'}, names:{A:'Pasangan A',B:'Pasangan B'}, records:[], daily:[], messages:[], pendingStart:{}, settings:{notifMinutes:60}, biometric:{registered:false,credentialId:null,lastUser:null}, privacy:{enabled:false,togetherMode:false} }; saveState(); renderAll(); alert('Reset selesai'); }
+
+/* delete/from daily above */
+
+/* download/upload handled above */
+
+/* init uploading camera for absence (use cameraInput for absence and dailyCamera for daily) */
+cameraInput.addEventListener('change', function(e){ /* absense camera input used earlier */ });
+
+/* renderDaily already defined */
+
+function sendMessage(from,to,text){
+  const t = timeNow();
+  state.messages.push({from,to,text,time:t.str});
+  saveState(); renderAll();
+}
+
+/* small helpers for UI actions */
+function deleteRecord(idx){ if(!confirm('Hapus catatan?')) return; state.records.splice(idx,1); saveState(); renderAll(); }
+function downloadBackupAuto(){ downloadBackup(); }
+
+/* request notification permission */
+function requestNotificationPermission(){ if(!('Notification' in window)) return alert('Notifikasi tidak didukung'); Notification.requestPermission().then(r=>alert('Permission: '+r)); }
+
+/* init */
 (function init(){
-  // populate calendar selects
+  // set selects
   monthSel.value = calMonth; yearSel.value = calYear;
+  // show/hide biometric button
+  isWebAuthnAvailable().then(av => { if(!av) bioBtn.style.display='none'; });
+  // save initial
   saveState();
-  // show/hide biometric button based on availability
-  isWebAuthnAvailable().then(av => { if(!av) bioBtn.style.display='none'; else bioBtn.style.display='inline-block'; });
-  // show or hide app based on login
+  // show lock
+  lockCard.style.display = 'block'; appEl.classList.add('hidden');
   renderAll();
 })();
 
-/* ---------- misc helpers ---------- */
-function saveProfile(){ state.names.A = nameA.value||state.names.A; state.names.B = nameB.value||state.names.B; state.settings.notifMinutes = Number(notifMinutes.value)||60; saveState(); alert('Profil tersimpan'); renderAll(); }
-function openPinManager(){ openSettings(); }
-
-/* ---------- daily camera helper ---------- */
-function openDailyCamera(){ dailyCam.click(); }
-
-/* ---------- delete daily helper ---------- */
-function deleteDaily(id){ state.daily = state.daily.filter(x=>x.id!==id); saveState(); renderDaily(); }
-
-/* ---------- restore camera input for absence (already connected) ---------- */
-
-/* expose some functions to HTML global scope */
+/* expose some functions for html onclick usage */
 window.doLogin = doLogin;
 window.loginWithBiometric = loginWithBiometric;
 window.openSettings = openSettings;
@@ -644,7 +697,10 @@ window.hideRaw = hideRaw;
 window.resetAll = resetAll;
 window.requestNotificationPermission = requestNotificationPermission;
 window.triggerSOS = triggerSOS;
-
+window.togglePrivacyMode = togglePrivacyMode;
+window.toggleTogether = toggleTogether;
+window.openPinManager = openPinManager;
+window.sendQuickMsg = sendQuickMsg;
 </script>
 </body>
 </html>
