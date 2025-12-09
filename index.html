@@ -1,199 +1,799 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <title>Diary Pasangan</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#22c55e">
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Diary Pasangan — Final</title>
+  <meta name="theme-color" content="#16a34a" />
+  <!-- Chart.js and jsPDF (CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg,#dcfce7,#bbf7d0);
-      color: #064e3b;
+    :root{
+      --bg: linear-gradient(180deg,#ecfdf5,#f0fdf4);
+      --card: #ffffff;
+      --text: #053e2d;
+      --muted: #3b7a61;
+      --accent: #16a34a;
+      --accent2: #34d399;
+      --radius: 12px;
     }
-    .card {
-      background: white;
-      margin: 12px;
-      padding: 12px;
-      border-radius: 14px;
-      box-shadow: 0 6px 16px rgba(0,0,0,0.1);
-    }
-    h1,h2 { text-align:center; }
-    button {
-      padding: 10px 14px;
-      border-radius: 10px;
-      border: none;
-      background: #22c55e;
-      color: white;
-      font-size: 14px;
-      cursor: pointer;
-    }
-    input, select {
-      width: 100%;
-      padding: 8px;
-      margin-top: 6px;
-      border-radius: 8px;
-      border: 1px solid #86efac;
-    }
-    img { width: 100%; border-radius: 10px; margin-top: 6px; }
-    .hidden { display: none; }
-    .log {
-      font-size: 12px;
-      border-top: 1px solid #bbf7d0;
-      margin-top: 6px;
-      padding-top: 6px;
-    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+    .wrap{max-width:1100px;margin:16px auto;padding:12px}
+    header{display:flex;align-items:center;gap:12px;padding:14px;border-radius:12px;background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff}
+    .logo{width:52px;height:52px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;background:rgba(255,255,255,0.08)}
+    h1{margin:0;font-size:18px}
+    .subtitle{font-size:13px;opacity:.95}
+    .card{background:var(--card);border-radius:var(--radius);padding:12px;margin-top:12px;box-shadow:0 10px 24px rgba(2,6,23,0.06);border:1px solid rgba(0,0,0,0.04)}
+    label{display:block;font-size:13px;color:var(--muted);margin-top:8px}
+    input,select,textarea,button{font-size:14px}
+    input,select,textarea{width:100%;padding:10px;border-radius:10px;border:1px solid #dbeede;background:white}
+    textarea{min-height:84px;resize:vertical}
+    .row{display:flex;gap:10px;align-items:center}
+    .col{flex:1}
+    .grid{display:grid;grid-template-columns:1fr 380px;gap:12px}
+    @media(max-width:900px){ .grid{grid-template-columns:1fr} .row{flex-direction:column} }
+    button{padding:9px 12px;border-radius:10px;border:0;cursor:pointer;background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff;box-shadow:0 8px 20px rgba(16,164,82,0.12)}
+    .btn-ghost{background:transparent;border:1px solid #e6f6ec;color:var(--muted)}
+    .btn-danger{background:linear-gradient(90deg,#ef4444,#f97316)}
+    .small{font-size:13px;color:var(--muted)}
+    .log{padding:10px;border-radius:10px;background:linear-gradient(180deg,#ffffff,#f8fffa);border:1px solid rgba(16,164,82,0.06);margin-bottom:10px}
+    .cal{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-top:10px}
+    .cal-day{padding:8px;border-radius:8px;background:white;border:1px solid #e6f6ec;min-height:64px;cursor:pointer}
+    .cal-day.has{box-shadow:0 8px 22px rgba(16,164,82,0.08);border-color:var(--accent)}
+    .badge{display:inline-block;background:var(--accent);color:#fff;padding:4px 8px;border-radius:999px;font-size:12px;margin-left:8px}
+    .status{display:inline-block;padding:6px 10px;border-radius:999px;background:#ecfdf5;color:var(--accent);font-weight:700}
+    .hidden{display:none}
+    canvas{width:100%!important;height:180px!important}
+    footer{margin-top:18px;text-align:center;font-size:13px;color:var(--muted)}
+    .modal-back{position:fixed;inset:0;background:rgba(2,6,23,0.45);display:flex;align-items:center;justify-content:center;padding:16px;z-index:50}
+    .modal{background:white;border-radius:12px;padding:16px;max-width:520px;width:100%}
+    .storage-bar{height:10px;background:#f0fdf4;border-radius:999px;overflow:hidden;margin-top:6px}
+    .storage-fill{height:100%;background:linear-gradient(90deg,#34d399,#059669);width:0%}
+    .tiny{font-size:12px;color:#6b7280}
   </style>
 </head>
-
 <body>
+<div class="wrap">
 
-<!-- LOGIN -->
-<div id="login" class="card">
-  <h1>Diary Pasangan</h1>
-  <label>Masuk sebagai</label>
-  <select id="loginAs">
-    <option value="A">Pasangan A</option>
-    <option value="B">Pasangan B</option>
-  </select>
+  <header>
+    <div class="logo">DP</div>
+    <div>
+      <h1>Diary Pasangan — Final</h1>
+      <div class="subtitle">All-in-one: Absensi, Selfie Check-in, GPS, Diary, Calendar, Reports</div>
+    </div>
+    <div style="margin-left:auto" class="small">Versi: FINAL</div>
+  </header>
 
-  <label>PIN</label>
-  <input id="pin" type="password">
+  <!-- LOGIN -->
+  <div class="card" id="cardLock">
+    <h2>🔐 Masuk</h2>
+    <div class="row" style="align-items:end">
+      <div style="width:160px">
+        <label>Masuk sebagai</label>
+        <select id="loginRole">
+          <option value="admin">Admin</option>
+          <option value="A">Pasangan A</option>
+          <option value="B">Pasangan B</option>
+        </select>
+      </div>
+      <div class="col">
+        <label>PIN</label>
+        <input id="loginPin" type="password" placeholder="Masukkan PIN">
+      </div>
+      <div style="width:140px">
+        <button onclick="doLogin()">Masuk</button>
+      </div>
+    </div>
+    <div class="small" style="margin-top:8px">PIN default: admin=1234 · A=1111 · B=2222</div>
+  </div>
 
-  <button onclick="login()">Masuk</button>
-  <p>PIN awal A = 1111 | B = 2222</p>
+  <!-- APP -->
+  <div id="app" class="hidden">
+
+    <div class="grid">
+      <!-- LEFT -->
+      <div>
+        <div class="card">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div>
+              <div style="font-weight:700">👫 Profil Pasangan</div>
+              <div class="small">Edit nama, kelola PIN, dan pengaturan dasar.</div>
+            </div>
+            <div>
+              <span class="status" id="statusText">Status</span>
+            </div>
+          </div>
+
+          <div style="margin-top:10px" class="row">
+            <div class="col">
+              <label>Nama Pasangan A</label>
+              <input id="nameA" />
+            </div>
+            <div style="width:160px">
+              <label>PIN A</label>
+              <input id="pinA" placeholder="1111" />
+            </div>
+          </div>
+
+          <div style="margin-top:8px" class="row">
+            <div class="col">
+              <label>Nama Pasangan B</label>
+              <input id="nameB" />
+            </div>
+            <div style="width:160px">
+              <label>PIN B</label>
+              <input id="pinB" placeholder="2222" />
+            </div>
+          </div>
+
+          <div class="row" style="margin-top:10px">
+            <button onclick="saveProfiles()">Simpan Profil</button>
+            <button class="btn-ghost" onclick="openPinManager()">Ganti PIN</button>
+            <button class="btn-ghost" onclick="requestNotif()">Izinkan Notifikasi</button>
+            <button class="btn-ghost" onclick="downloadBackup()">Download Backup</button>
+          </div>
+
+          <div style="margin-top:10px">
+            <label>Auto-lock (menit)</label>
+            <input id="idleMinutes" type="number" min="1" value="5" />
+          </div>
+
+        </div>
+
+        <div class="card">
+          <h3>📍 Absensi (ChekLok)</h3>
+          <div class="small">Keluar & Pulang wajib selfie (kamera depan). Sudah Sampai tidak wajib selfie.</div>
+
+          <div class="row">
+            <div style="width:130px">
+              <label>Pilih Orang</label>
+              <select id="absPerson"><option value="A">A</option><option value="B">B</option></select>
+            </div>
+            <div class="col">
+              <label>Aksi</label>
+              <div style="display:flex;gap:8px">
+                <button onclick="startAbs('keluar')">Keluar</button>
+                <button onclick="startAbs('pulang')">Pulang</button>
+                <button onclick="openSampaiModal()">✅ Sudah Sampai</button>
+              </div>
+            </div>
+            <div style="width:160px">
+              <label>Foto bukti (opsional untuk 'sampai')</label>
+              <!-- selfieProof is used for Keluar/Pulang (capture user) -->
+              <input id="selfieProof" type="file" accept="image/*" capture="user" class="hidden" />
+              <!-- optional proof for 'sampai' or daily (can open gallery) -->
+              <input id="photoOptional" type="file" accept="image/*" class="hidden" />
+            </div>
+          </div>
+
+          <div style="margin-top:10px" class="small">Jika kamera tidak mengizinkan, absen akan dibatalkan. Foto disimpan di perangkat.</div>
+        </div>
+
+        <div class="card">
+          <h3>📸 Foto Aktivitas Harian</h3>
+          <div class="row">
+            <div style="width:120px">
+              <label>Siapa</label>
+              <select id="dailyWho"><option value="A">A</option><option value="B">B</option></select>
+            </div>
+            <div class="col">
+              <label>Keterangan</label>
+              <input id="dailyNote" placeholder="Contoh: Makan siang, tugas, belanja..." />
+            </div>
+            <div style="width:150px">
+              <label>Foto (kamera/galeri)</label>
+              <input id="dailyFile" type="file" accept="image/*" />
+            </div>
+            <div style="width:120px;display:flex;align-items:flex-end">
+              <button onclick="uploadDaily()">Upload</button>
+            </div>
+          </div>
+          <div class="small" style="margin-top:8px">Foto aktivitas tersimpan ke galeri internal aplikasi dan bisa dihapus kapan saja.</div>
+          <div id="dailyGallery" style="margin-top:10px;display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px"></div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT -->
+      <div>
+        <div class="card">
+          <h3>📊 Ringkasan & Grafik</h3>
+          <canvas id="mainChart"></canvas>
+          <div style="margin-top:8px" class="row">
+            <button class="btn-ghost" onclick="exportCSV()">Export CSV</button>
+            <button class="btn-ghost" onclick="exportTodayPDF()">Cetak Laporan Hari Ini (PDF)</button>
+            <button class="btn-ghost" onclick="sendReminder()">Kirim Pengingat</button>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:12px">
+          <h3>📅 Kalender</h3>
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+            <select id="monthSel"></select>
+            <select id="yearSel" style="width:110px"></select>
+            <button class="btn-ghost" onclick="prevMonth()">◀</button>
+            <button class="btn-ghost" onclick="nextMonth()">▶</button>
+          </div>
+          <div id="calendar" class="cal"></div>
+        </div>
+
+        <div class="card" style="margin-top:12px">
+          <h3>⚙️ Pengelolaan Foto & Storage</h3>
+          <div class="small">Penggunaan storage foto (perkiraan):</div>
+          <div class="storage-bar"><div id="storageFill" class="storage-fill"></div></div>
+          <div class="tiny" id="storageText"></div>
+          <div style="margin-top:8px" class="row">
+            <button class="btn-ghost" onclick="cleanupOld()">Bersihkan Foto Lama</button>
+            <button class="btn-danger" onclick="resetAll()">Reset Semua</button>
+          </div>
+          <div class="small" style="margin-top:8px">Undo terakhir tersedia untuk penghapusan satu record.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:12px">
+      <h3>🕒 Timeline & Riwayat</h3>
+      <div id="timeline" style="max-height:380px;overflow:auto"></div>
+    </div>
+
+  </div> <!-- end app -->
+
+  <footer>Diary Pasangan — Data disimpan di perangkat Anda • Simpan backup sebelum reset</footer>
 </div>
 
-<!-- APLIKASI -->
-<div id="app" class="hidden">
-
-  <div class="card">
-    <h2>Nama Pasangan</h2>
-    <input id="nameA" placeholder="Nama Pasangan A">
-    <input id="nameB" placeholder="Nama Pasangan B">
-    <button onclick="saveNames()">Simpan Nama</button>
+<!-- Sampai modal -->
+<div id="modalSampai" class="hidden">
+  <div class="modal-back" id="modalBack" style="display:none">
+    <div class="modal">
+      <h3>Pilih Lokasi Sudah Sampai</h3>
+      <div style="margin-top:8px;display:flex;flex-direction:column;gap:8px">
+        <button onclick="confirmSampai('Rumah')" style="width:100%">🏠 Rumah</button>
+        <button onclick="confirmSampai('Kampus')" style="width:100%">🏫 Kampus</button>
+        <button onclick="confirmSampai('Lain-lain')" style="width:100%">📍 Lain-lain...</button>
+      </div>
+      <div style="margin-top:10px;display:flex;justify-content:flex-end;gap:8px">
+        <button class="btn-ghost" onclick="closeSampai()">Batal</button>
+      </div>
+    </div>
   </div>
-
-  <div class="card">
-    <h2>Absensi Keluar & Pulang</h2>
-    <select id="absenWho">
-      <option value="A">Pasangan A</option>
-      <option value="B">Pasangan B</option>
-    </select>
-    <select id="absenType">
-      <option value="Keluar">Keluar</option>
-      <option value="Pulang">Pulang</option>
-    </select>
-    <button onclick="absen()">Simpan Absensi</button>
-    <div id="absenList"></div>
-  </div>
-
-  <div class="card">
-    <h2>Foto Aktivitas</h2>
-    <select id="photoWho">
-      <option value="A">Pasangan A</option>
-      <option value="B">Pasangan B</option>
-    </select>
-    <input id="photoFile" type="file" accept="image/*" capture="environment">
-    <button onclick="uploadPhoto()">Upload</button>
-  </div>
-
-  <div class="card">
-    <h2>Galeri Aktivitas</h2>
-    <div id="gallery"></div>
-  </div>
-
-  <button onclick="logout()">Keluar</button>
-
 </div>
 
 <script>
-const KEY_ABSEN = "diary_absen";
-const KEY_PHOTO = "diary_photo";
-const KEY_NAMES = "diary_names";
+/* ===========================
+   FINAL single-file app JS
+   =========================== */
 
-let absensi = JSON.parse(localStorage.getItem(KEY_ABSEN)) || [];
-let photos = JSON.parse(localStorage.getItem(KEY_PHOTO)) || [];
-let names = JSON.parse(localStorage.getItem(KEY_NAMES)) || {A:"Pasangan A", B:"Pasangan B"};
+/* Storage keys */
+const KEY_STATE = 'dp_final_state_v1';
+const KEY_NAMES = 'dp_final_names_v1';
+const KEY_SETTINGS = 'dp_final_settings_v1';
+const KEY_PHOTOS = 'dp_final_photos_v1';
+const KEY_LASTTIME = 'dp_final_lasttime_v1';
+const KEY_PINS = 'dp_final_pins_v1';
 
-function login(){
-  const who = document.getElementById("loginAs").value;
-  const pin = document.getElementById("pin").value;
+let state = JSON.parse(localStorage.getItem(KEY_STATE)) || []; // events
+let photos = JSON.parse(localStorage.getItem(KEY_PHOTOS)) || []; // activity photos
+let names = JSON.parse(localStorage.getItem(KEY_NAMES)) || {A:'Pasangan A', B:'Pasangan B'};
+let settings = JSON.parse(localStorage.getItem(KEY_SETTINGS)) || {notifMinutes:60, autoBackup:false, idleMinutes:5};
+let pins = JSON.parse(localStorage.getItem(KEY_PINS)) || {admin:'1234', A:'1111', B:'2222'};
+let lastUndo = null;
 
-  if(
-    (who === "A" && pin === "1111") ||
-    (who === "B" && pin === "2222")
-  ){
-    document.getElementById("login").classList.add("hidden");
-    document.getElementById("app").classList.remove("hidden");
+/* UI refs */
+const app = document.getElementById('app');
+const cardLock = document.getElementById('cardLock');
+const loginRole = document.getElementById('loginRole');
+const loginPin = document.getElementById('loginPin');
+const nameA = document.getElementById('nameA');
+const nameB = document.getElementById('nameB');
+const pinAInput = document.getElementById('pinA');
+const pinBInput = document.getElementById('pinB');
+const notifMinutesInput = document.getElementById('notifMinutes');
+const timelineEl = document.getElementById('timeline');
+const dailyGallery = document.getElementById('dailyGallery');
+const monthSel = document.getElementById('monthSel');
+const yearSel = document.getElementById('yearSel');
+const storageFill = document.getElementById('storageFill');
+const storageText = document.getElementById('storageText');
+const idleMinutesInput = document.getElementById('idleMinutes');
+
+let mainChart = null;
+const chartCtx = document.getElementById('mainChart').getContext('2d');
+
+/* Month/Year init */
+(function initMonthYear(){
+  const now = new Date();
+  for(let m=0;m<12;m++){
+    const o=document.createElement('option'); o.value=m; o.textContent=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'][m];
+    if(m===now.getMonth()) o.selected=true;
+    monthSel.appendChild(o);
+  }
+  for(let y=now.getFullYear()-2;y<=now.getFullYear()+2;y++){
+    const o=document.createElement('option'); o.value=y; o.textContent=y; if(y===now.getFullYear()) o.selected=true;
+    yearSel.appendChild(o);
+  }
+})();
+
+/* ---------- Helpers ---------- */
+function saveAll(){
+  localStorage.setItem(KEY_STATE, JSON.stringify(state));
+  localStorage.setItem(KEY_PHOTOS, JSON.stringify(photos));
+  localStorage.setItem(KEY_NAMES, JSON.stringify(names));
+  localStorage.setItem(KEY_SETTINGS, JSON.stringify(settings));
+  localStorage.setItem(KEY_PINS, JSON.stringify(pins));
+  // update last saved time
+  localStorage.setItem(KEY_LASTTIME, new Date().toISOString());
+  updateStorageUI();
+}
+
+/* compute approximate storage used by base64 images (bytes) */
+function estimateStorageUsage(){
+  let bytes = 0;
+  state.forEach(s=>{ if(s.photo) bytes += Math.round((s.photo.length*3)/4); });
+  photos.forEach(p=>{ if(p.photo) bytes += Math.round((p.photo.length*3)/4); });
+  // add small overhead for JSON text
+  bytes += JSON.stringify(state).length + JSON.stringify(photos).length;
+  return bytes;
+}
+function humanBytes(b){
+  if(b < 1024) return b + ' B';
+  if(b < 1024*1024) return (b/1024).toFixed(1) + ' KB';
+  if(b < 1024*1024*1024) return (b/1024/1024).toFixed(1) + ' MB';
+  return (b/1024/1024/1024).toFixed(2) + ' GB';
+}
+function updateStorageUI(){
+  const used = estimateStorageUsage();
+  // approximate quota (varies by browser) -> warn at 50MB
+  const quota = 50 * 1024 * 1024;
+  const pct = Math.min(100, Math.round(used / quota * 100));
+  storageFill.style.width = pct + '%';
+  storageText.textContent = `Perkiraan penggunaan: ${humanBytes(used)} (perkiraan kuota ${humanBytes(quota)}).`;
+}
+
+/* time tamper detection (basic): if current time < lastSavedTime - 2 minutes => flag */
+function checkTimeTamper(nowISO){
+  const last = localStorage.getItem(KEY_LASTTIME);
+  if(!last) { localStorage.setItem(KEY_LASTTIME, nowISO); return false; }
+  const lastMs = new Date(last).getTime();
+  const nowMs = new Date(nowISO).getTime();
+  if(nowMs + 120000 < lastMs){ // now is earlier than last saved by >2min
+    return true;
+  }
+  localStorage.setItem(KEY_LASTTIME, nowISO);
+  return false;
+}
+
+/* convert file->dataURL */
+function fileToDataURL(file, cb){
+  const fr = new FileReader();
+  fr.onload = ()=> cb(fr.result);
+  fr.onerror = ()=> cb(null);
+  fr.readAsDataURL(file);
+}
+
+/* geolocation with fallback */
+function tryGeolocation(cb){
+  if(!navigator.geolocation) return cb('Lokasi tidak tersedia');
+  let called = false;
+  const ok = (p)=>{ if(called) return; called=true; cb(p.coords.latitude.toFixed(6)+','+p.coords.longitude.toFixed(6)); };
+  const er = ()=>{ if(called) return; called=true; cb('Lokasi gagal'); };
+  navigator.geolocation.getCurrentPosition(ok, er, {enableHighAccuracy:true, timeout:8000});
+  setTimeout(()=>{ if(!called){ called=true; cb('Lokasi timeout'); } }, 9000);
+}
+
+/* schedule reminder for not returned */
+let reminderTimers = {};
+function scheduleReminderIfNeeded(person, type){
+  if(type === 'keluar'){
+    clearReminder(person);
+    const mins = Number(settings.notifMinutes || 60);
+    if(Notification.permission === 'granted'){
+      reminderTimers[person] = setTimeout(()=> {
+        try { new Notification('Pengingat Pulang', {body:`${names[person]||person} belum tercatat pulang.`}); } catch(e){}
+      }, mins*60000);
+    }
   } else {
-    alert("PIN salah!");
+    clearReminder(person);
+  }
+}
+function clearReminder(person){ if(reminderTimers[person]){ clearTimeout(reminderTimers[person]); delete reminderTimers[person]; } }
+
+/* ---------- Login / Profile ---------- */
+function doLogin(){
+  const role = loginRole.value;
+  const pin = (loginPin.value||'').trim();
+  if((role==='admin' && pin===pins.admin) || (role==='A' && pin===pins.A) || (role==='B' && pin===pins.B)){
+    cardLock.style.display='none';
+    app.classList.remove('hidden');
+    nameA.value = names.A; nameB.value = names.B;
+    pinAInput.value = pins.A; pinBInput.value = pins.B;
+    idleMinutesInput.value = settings.idleMinutes || 5;
+    renderAll();
+    startIdleMonitor();
+    updateStorageUI();
+  } else alert('PIN salah');
+}
+function saveProfiles(){
+  names.A = nameA.value || 'Pasangan A';
+  names.B = nameB.value || 'Pasangan B';
+  // allow updating pins inputs to stored pins variable later via change pin manager
+  pins.A = pinAInput.value || pins.A;
+  pins.B = pinBInput.value || pins.B;
+  settings.idleMinutes = Number(idleMinutesInput.value) || settings.idleMinutes;
+  saveAll();
+  alert('Profil dan pengaturan disimpan');
+}
+function openPinManager(){
+  const adm = prompt('Masukkan PIN admin:');
+  if(adm !== pins.admin) return alert('PIN admin salah');
+  const who = prompt('Kelola PIN untuk (admin/A/B):','A');
+  if(!who) return;
+  if(!pins[who]) return alert('Target PIN tidak valid');
+  const oldp = prompt('PIN lama:');
+  if(oldp !== pins[who]) return alert('PIN lama salah');
+  const neu = prompt('PIN baru (min 4):');
+  if(!neu || neu.length<4) return alert('PIN minimal 4');
+  pins[who]=neu; saveAll(); alert('PIN berhasil diubah');
+}
+
+/* ---------- Absensi: selfie required for keluar/pulang ---------- */
+function startAbs(type){
+  const person = document.getElementById('absPerson').value;
+  // require selfie for keluar/pulang
+  if(type === 'keluar' || type === 'pulang'){
+    const selfieIn = document.getElementById('selfieProof');
+    // one-time handler
+    const handler = function(){
+      const file = selfieIn.files[0];
+      if(!file){ alert('Foto selfie dibatalkan. Aksi dibatalkan.'); selfieIn.removeEventListener('change', handler); selfieIn.value=''; return; }
+      fileToDataURL(file, (dataUrl)=>{
+        if(!dataUrl){ alert('Gagal membaca foto.'); selfieIn.removeEventListener('change', handler); selfieIn.value=''; return; }
+        const tISO = new Date().toISOString();
+        if(checkTimeTamper(tISO)) alert('Peringatan: waktu perangkat dicurigai dimanipulasi.');
+        tryGeolocation((loc)=>{
+          const ev = { id: Date.now(), person, type, timeISO: tISO, timeStr: new Date().toLocaleString(), loc, photo: dataUrl };
+          state.push(ev); saveAll(); renderAll(); scheduleReminderIfNeeded(person, type);
+          alert('Absensi tercatat dengan selfie.');
+          selfieIn.removeEventListener('change', handler); selfieIn.value='';
+        });
+      });
+    };
+    selfieIn.addEventListener('change', handler);
+    selfieIn.click(); // triggers camera on mobile with capture="user"
+    return;
+  }
+
+  // 'sampai' handled by modal
+  openSampaiModal();
+}
+
+/* ---------- Sampai modal flow ---------- */
+function openSampaiModal(){
+  document.getElementById('modalSampai').classList.remove('hidden');
+  document.getElementById('modalBack').style.display='flex';
+}
+function closeSampai(){
+  document.getElementById('modalSampai').classList.add('hidden');
+  document.getElementById('modalBack').style.display='none';
+}
+function confirmSampai(choice){
+  closeSampai();
+  if(choice === 'Lain-lain'){
+    const custom = prompt('Masukkan lokasi (Lain-lain):','');
+    if(!custom) return alert('Aksi dibatalkan');
+    startSampaiWithKet(custom);
+  } else {
+    startSampaiWithKet(choice);
+  }
+}
+function startSampaiWithKet(ket){
+  const person = document.getElementById('absPerson').value;
+  // optional photo for sampai: open photoOptional to allow gallery/camera
+  const photoOptional = document.getElementById('photoOptional');
+  const handler = function(){
+    const f = photoOptional.files[0];
+    if(f){
+      fileToDataURL(f,(dataUrl)=>{
+        const tISO=new Date().toISOString();
+        if(checkTimeTamper(tISO)) alert('Peringatan: waktu perangkat dicurigai dimanipulasi.');
+        tryGeolocation((loc)=>{
+          const ev = {id:Date.now(), person, type:'sampai', ket, timeISO:tISO, timeStr:new Date().toLocaleString(), loc, photo:dataUrl};
+          state.push(ev); saveAll(); renderAll(); alert('Sudah sampai tercatat dengan foto (opsional).');
+          photoOptional.removeEventListener('change', handler); photoOptional.value='';
+        });
+      });
+    } else {
+      const tISO=new Date().toISOString();
+      if(checkTimeTamper(tISO)) alert('Peringatan: waktu perangkat dicurigai dimanipulasi.');
+      tryGeolocation((loc)=>{
+        const ev = {id:Date.now(), person, type:'sampai', ket, timeISO:tISO, timeStr:new Date().toLocaleString(), loc};
+        state.push(ev); saveAll(); renderAll(); alert('Sudah sampai tercatat.'); photoOptional.removeEventListener('change', handler); photoOptional.value='';
+      });
+    }
+  };
+  photoOptional.addEventListener('change', handler);
+  // open optional picker so user may choose photo, or cancel to record without photo
+  if(confirm('Ingin menambahkan foto bukti untuk "Sudah Sampai"? Pilih OK untuk upload foto, Cancel untuk lanjut tanpa foto.')) {
+    photoOptional.click();
+  } else {
+    handler(); // record without photo
   }
 }
 
-function logout(){
-  document.getElementById("login").classList.remove("hidden");
-  document.getElementById("app").classList.add("hidden");
-}
-
-function saveNames(){
-  names.A = nameA.value || "Pasangan A";
-  names.B = nameB.value || "Pasangan B";
-  localStorage.setItem(KEY_NAMES, JSON.stringify(names));
-  alert("Nama tersimpan");
-}
-
-function absen(){
-  const who = document.getElementById("absenWho").value;
-  const type = document.getElementById("absenType").value;
-  const t = new Date().toLocaleString();
-
-  absensi.push({id:Date.now(), who, type, time:t});
-  localStorage.setItem(KEY_ABSEN, JSON.stringify(absensi));
-  renderAbsen();
-}
-
-function renderAbsen(){
-  absenList.innerHTML = "";
-  absensi.slice().reverse().forEach(a=>{
-    const d = document.createElement("div");
-    d.className = "log";
-    d.textContent = `${names[a.who]} - ${a.type} - ${a.time}`;
-    absenList.appendChild(d);
+/* ---------- Daily photo upload ---------- */
+function uploadDaily(){
+  const f = document.getElementById('dailyFile').files[0];
+  if(!f) return alert('Pilih foto dulu');
+  const who = document.getElementById('dailyWho').value;
+  const note = document.getElementById('dailyNote').value || '';
+  fileToDataURL(f, (dataUrl)=>{
+    if(!dataUrl) return alert('Gagal membaca foto');
+    const rec = {id:Date.now(), person:who, note, timeISO:new Date().toISOString(), timeStr:new Date().toLocaleString(), photo:dataUrl};
+    photos.push(rec); saveAll(); renderPhotos(); document.getElementById('dailyFile').value=''; document.getElementById('dailyNote').value='';
+    alert('Foto aktivitas disimpan');
   });
 }
-
-function uploadPhoto(){
-  const f = photoFile.files[0];
-  if(!f) return alert("Pilih foto dulu");
-
-  const who = photoWho.value;
-  const r = new FileReader();
-
-  r.onload = ()=>{
-    photos.push({id:Date.now(), who, photo:r.result});
-    localStorage.setItem(KEY_PHOTO, JSON.stringify(photos));
-    renderPhotos();
-  };
-
-  r.readAsDataURL(f);
-}
-
 function renderPhotos(){
-  gallery.innerHTML = "";
+  dailyGallery.innerHTML='';
   photos.slice().reverse().forEach(p=>{
-    const img = document.createElement("img");
-    img.src = p.photo;
-    gallery.appendChild(img);
+    const d = document.createElement('div'); d.style.background='#fff'; d.style.border='1px solid rgba(0,0,0,0.03)'; d.style.padding='6px'; d.style.borderRadius='8px';
+    d.innerHTML = `<div style="font-weight:700">${names[p.person]||p.person}</div><div class="tiny">${p.timeStr}</div><img src="${p.photo}" style="width:100%;height:100px;object-fit:cover;border-radius:6px;margin-top:6px"><div class="tiny" style="margin-top:6px">${p.note||''}</div><div style="margin-top:6px;display:flex;gap:6px"><button class="btn-ghost" onclick="deletePhoto(${p.id})">Hapus</button></div>`;
+    dailyGallery.appendChild(d);
   });
 }
 
-nameA.value = names.A;
-nameB.value = names.B;
-renderAbsen();
-renderPhotos();
-</script>
+/* ---------- render timeline ---------- */
+function renderAll(){
+  // names to inputs
+  nameA.value = names.A; nameB.value = names.B;
+  pinAInput.value = pins.A; pinBInput.value = pins.B;
+  // timeline
+  timelineEl.innerHTML='';
+  // show trips grouped by date (trip history)
+  const grouped = {};
+  state.slice().reverse().forEach(ev=>{
+    const day = (ev.timeISO||'').slice(0,10) || ev.timeStr.split(',')[0];
+    grouped[day] = grouped[day] || [];
+    grouped[day].push(ev);
+  });
+  Object.keys(grouped).sort((a,b)=>b.localeCompare(a)).forEach(day=>{
+    const box = document.createElement('div'); box.style.marginBottom='8px';
+    box.innerHTML = `<div style="font-weight:800">${day}</div>`;
+    grouped[day].forEach(ev=>{
+      const div = document.createElement('div'); div.className='log';
+      let html = `<div style="font-weight:700">${names[ev.person]||ev.person} — ${ev.type.toUpperCase()} ${ev.ket?('('+ev.ket+')'):''}</div>`;
+      html += `<div class="tiny">${ev.timeStr || ev.timeISO}</div>`;
+      html += `<div class="tiny">Lokasi: ${ev.loc || '-'}</div>`;
+      if(ev.photo) html += `<img src="${ev.photo}" style="max-width:240px;margin-top:6px;border-radius:6px">`;
+      html += `<div style="margin-top:6px"><button class="btn-ghost" onclick="deleteRecord(${ev.id})">Hapus</button></div>`;
+      div.innerHTML = html; box.appendChild(div);
+    });
+    timelineEl.appendChild(box);
+  });
 
+  renderPhotos();
+  renderChart();
+  renderCalendar();
+  updateStorageUI();
+}
+
+/* ---------- Delete / Undo ---------- */
+function deleteRecord(id){
+  if(!confirm('Hapus record ini?')) return;
+  const idx = state.findIndex(s=>s.id===id);
+  if(idx===-1) return;
+  lastUndo = {type:'delete', item: state[idx], index: idx};
+  state.splice(idx,1); saveAll(); renderAll();
+  alert('Terhapus. Gunakan Undo jika perlu.');
+}
+function deletePhoto(id){
+  if(!confirm('Hapus foto ini?')) return;
+  const idx = photos.findIndex(p=>p.id===id);
+  if(idx===-1) return;
+  lastUndo = {type:'deletePhoto', item: photos[idx], index: idx};
+  photos.splice(idx,1); saveAll(); renderPhotos(); updateStorageUI();
+}
+function undoLast(){
+  if(!lastUndo) return alert('Tidak ada aksi untuk di-undo');
+  if(lastUndo.type==='delete'){
+    state.splice(lastUndo.index,0,lastUndo.item);
+    saveAll(); renderAll(); lastUndo=null; alert('Undo berhasil');
+  } else if(lastUndo.type==='deletePhoto'){
+    photos.splice(lastUndo.index,0,lastUndo.item); saveAll(); renderPhotos(); lastUndo=null; alert('Undo berhasil');
+  }
+}
+
+/* ---------- Chart & Calendar ---------- */
+function renderChart(){
+  const counts = {};
+  state.forEach(s=>{
+    const day = (s.timeISO||'').slice(0,10);
+    if(!day) return;
+    counts[day] = (counts[day]||0)+1;
+  });
+  const labels = Object.keys(counts).sort();
+  const dataArr = labels.map(l=>counts[l]);
+  if(mainChart) mainChart.destroy();
+  mainChart = new Chart(chartCtx, {type:'bar', data:{labels, datasets:[{label:'Aktivitas/hari', data:dataArr, backgroundColor:'#16a34a'}]}, options:{responsive:true, maintainAspectRatio:false}});
+}
+function renderCalendar(){
+  calendar.innerHTML='';
+  const month = Number(monthSel.value);
+  const year = Number(yearSel.value);
+  const first = new Date(year,month,1);
+  const start = first.getDay();
+  const days = new Date(year,month+1,0).getDate();
+  for(let i=0;i<start;i++){ const b=document.createElement('div'); b.className='cal-day'; calendar.appendChild(b); }
+  for(let d=1; d<=days; d++){
+    const iso = new Date(year,month,d).toISOString().slice(0,10);
+    const evs = state.filter(s => (s.timeISO||'').slice(0,10) === iso);
+    const c = document.createElement('div'); c.className = 'cal-day' + (evs.length? ' has':'');
+    c.innerHTML = `<div style="font-weight:700">${d} <div class="tiny">${['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'][month]}</div>${evs.length?'<div class="badge">'+evs.length+'</div>':''}</div>`;
+    c.onclick = ()=> openDayReport(iso);
+    calendar.appendChild(c);
+  }
+}
+function prevMonth(){ let m=Number(monthSel.value), y=Number(yearSel.value); m--; if(m<0){m=11;y--;} monthSel.value=m; yearSel.value=y; renderCalendar(); }
+function nextMonth(){ let m=Number(monthSel.value), y=Number(yearSel.value); m++; if(m>11){m=0;y++;} monthSel.value=m; yearSel.value=y; renderCalendar(); }
+function openDayReport(dateISO){
+  const evs = state.filter(s => (s.timeISO||'').slice(0,10) === dateISO);
+  let html = `<h2>Laporan ${dateISO}</h2><hr>`;
+  if(evs.length===0) html += '<p>Tidak ada aktivitas</p>';
+  evs.forEach(e=>{
+    html += `<div><b>${names[e.person]||e.person}</b> — ${e.type.toUpperCase()} ${e.ket? '('+e.ket+')':''}<br>${e.timeStr || e.timeISO}<br>Loc: ${e.loc || '-'}${e.photo?'<br><img src="'+e.photo+'" style="max-width:240px;margin-top:6px;border-radius:6px">':''}</div><hr>`;
+  });
+  const w = window.open('','_blank'); w.document.write(`<html><head><meta charset="utf-8"><title>Laporan ${dateISO}</title></head><body>${html}</body></html>`); w.document.close(); setTimeout(()=> w.print(),600);
+}
+
+/* ---------- Export / Backup ---------- */
+function exportCSV(){
+  const sessions = buildSessions();
+  let csv = 'person,start,end,duration_min\n';
+  sessions.forEach(s => csv += `${s.person},${s.start},${s.end},${Math.round(s.durationMs/60000)}\n`);
+  const blob = new Blob([csv],{type:'text/csv'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='rekap_sessions.csv'; a.click(); URL.revokeObjectURL(a.href);
+}
+function exportTodayPDF(){
+  try{
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    const iso = new Date().toISOString().slice(0,10);
+    doc.setFontSize(14); doc.text(`Laporan ${iso}`, 10, 14);
+    let y=24;
+    const evs = state.filter(s=> (s.timeISO||'').slice(0,10) === iso);
+    if(evs.length===0) doc.text('Tidak ada aktivitas hari ini', 10, y);
+    evs.forEach(ev=>{
+      doc.setFontSize(11);
+      doc.text(`${names[ev.person]||ev.person} - ${ev.type.toUpperCase()} ${ev.ket? '('+ev.ket+')':''} - ${ev.timeStr||ev.timeISO}`, 10, y);
+      y+=8; if(y>260){ doc.addPage(); y=20; }
+    });
+    doc.save(`laporan_${iso}.pdf`);
+  }catch(e){ alert('Gagal export PDF: '+(e.message||e)); }
+}
+function downloadBackup(){
+  const obj = {state, photos, names, settings, pins};
+  const blob = new Blob([JSON.stringify(obj,null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='dp_backup.json'; a.click(); URL.revokeObjectURL(a.href);
+}
+function importBackup(e){
+  const f = e.target.files[0]; if(!f) return;
+  const r = new FileReader(); r.onload = ()=> {
+    try{
+      const obj = JSON.parse(r.result);
+      if(obj.state) state = obj.state;
+      if(obj.photos) photos = obj.photos;
+      if(obj.names) names = obj.names;
+      if(obj.settings) settings = obj.settings;
+      if(obj.pins) pins = obj.pins;
+      saveAll(); renderAll(); alert('Restore berhasil');
+    }catch(err){ alert('File tidak valid'); }
+  }; r.readAsText(f);
+}
+
+/* build sessions from keluar/pulang */
+function buildSessions(){
+  const by = {A:[],B:[]};
+  state.forEach(d=>{ if(d.person==='A'||d.person==='B') by[d.person].push(d); });
+  const sessions=[];
+  Object.keys(by).forEach(p=>{
+    by[p].sort((a,b)=> (a.timeISO||'').localeCompare(b.timeISO||''));
+    let open=null;
+    by[p].forEach(ev=>{
+      if(ev.type==='keluar') open = ev;
+      else if(ev.type==='pulang' && open){
+        sessions.push({person:p,start:open.timeISO,end:ev.timeISO,durationMs:new Date(ev.timeISO)-new Date(open.timeISO)});
+        open=null;
+      }
+    });
+  });
+  return sessions;
+}
+
+/* ---------- Cleanup helpers ---------- */
+/* delete photos older than 30 days, optionally more complex logic */
+function cleanupOld(){
+  if(!confirm('Hapus foto aktivitas yang lebih dari 30 hari? (Hapus per foto juga tersedia di galeri)')) return;
+  const cutoff = Date.now() - 30*24*60*60*1000;
+  const before = photos.length;
+  photos = photos.filter(p => (new Date(p.timeISO)).getTime() >= cutoff );
+  saveAll(); renderPhotos(); updateStorageUI();
+  alert(`Bersihkan selesai. Foto tersisa: ${photos.length} (sebelumnya ${before})`);
+}
+
+/* ---------- Idle auto-lock ---------- */
+let lastActivity = Date.now();
+let idleTimer = null;
+function startIdleMonitor(){
+  document.addEventListener('mousemove', ()=> lastActivity = Date.now());
+  document.addEventListener('click', ()=> lastActivity = Date.now());
+  document.addEventListener('keydown', ()=> lastActivity = Date.now());
+  if(idleTimer) clearInterval(idleTimer);
+  idleTimer = setInterval(()=> {
+    const idleMin = Number(settings.idleMinutes || 5);
+    if(Date.now() - lastActivity > idleMin*60000){
+      lockApp();
+    }
+  }, 10000);
+}
+function lockApp(){ app.classList.add('hidden'); cardLock.style.display='block'; alert('Aplikasi terkunci otomatis karena tidak aktif. Silakan login kembali.'); }
+
+/* ---------- Notifications ---------- */
+function requestNotif(){
+  if(!('Notification' in window)) return alert('Notifikasi tidak didukung');
+  Notification.requestPermission().then(r => alert('Permission: '+r));
+}
+function sendReminder(){
+  if(Notification.permission === 'granted'){ new Notification('Pengingat Diary',{body:'Ingatkan pasangan untuk pulang jika belum tercatat.'}); alert('Pengingat dikirim'); }
+  else alert('Notifikasi belum diizinkan');
+}
+
+/* ---------- Other utils ---------- */
+function resetAll(){
+  if(!confirm('Yakin hapus semua data?')) return;
+  localStorage.clear();
+  state=[]; photos=[]; names={A:'Pasangan A',B:'Pasangan B'}; pins={admin:'1234',A:'1111',B:'2222'};
+  saveAll(); location.reload();
+}
+
+/* ---------- Init ---------- */
+(function init(){
+  // load saved
+  state = JSON.parse(localStorage.getItem(KEY_STATE)) || state;
+  photos = JSON.parse(localStorage.getItem(KEY_PHOTOS)) || photos;
+  names = JSON.parse(localStorage.getItem(KEY_NAMES)) || names;
+  settings = JSON.parse(localStorage.getItem(KEY_SETTINGS)) || settings;
+  pins = JSON.parse(localStorage.getItem(KEY_PINS)) || pins;
+  // prefill UI
+  nameA.value = names.A; nameB.value = names.B; pinAInput.value = pins.A; pinBInput.value = pins.B;
+  idleMinutesInput.value = settings.idleMinutes || 5;
+  // set month/year selects
+  monthSel.value = (new Date()).getMonth();
+  yearSel.value = (new Date()).getFullYear();
+  renderAll();
+  updateStorageUI();
+})();
+
+/* Expose some functions for quick access */
+window.doLogin = doLogin;
+window.saveProfiles = saveProfiles;
+window.startAbs = startAbs;
+window.openSampaiModal = openSampaiModal;
+window.confirmSampai = confirmSampai;
+window.closeSampai = closeSampai;
+window.uploadDaily = uploadDaily;
+window.exportCSV = exportCSV;
+window.exportTodayPDF = exportTodayPDF;
+window.downloadBackup = downloadBackup;
+window.importBackup = importBackup;
+window.prevMonth = prevMonth;
+window.nextMonth = nextMonth;
+window.undoLast = undoLast;
+window.resetAll = resetAll;
+window.openPinManager = openPinManager;
+window.requestNotif = requestNotif;
+window.sendReminder = sendReminder;
+window.deletePhoto = deletePhoto;
+
+</script>
 </body>
 </html>
